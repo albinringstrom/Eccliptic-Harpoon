@@ -7,3 +7,4 @@ Then write the following in the windows (one in each (the order is important kin
 Now YoU can write messages in Ground_Station Terminal (DONTTT WRITE IN THE OTHEEERS)
 
 Albin was here
+Now Sebbe was here to

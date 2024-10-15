@@ -8,4 +8,6 @@ Now YoU can write messages in Ground_Station Terminal (DONTTT WRITE IN THE OTHEE
 
 Albin was here
 Now Sebbe was here to
-Rasmus was here the most
+Rasmus was here the most, och knullade runt rejält,
+
+Gitignore is now a thing, has to be there in order to commit from VS.

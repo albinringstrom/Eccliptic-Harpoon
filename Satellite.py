@@ -1,3 +1,4 @@
+from http import server
 import socket
 import time
 import subprocess
@@ -7,9 +8,9 @@ import subprocess
 
 def tc_accept(var: bool):
     if var:
-        groundrecieversocket.send("Telecommand accepted: success".encode("utf-8"))
+        groundrecieversocket.send("Telecommand accepted: success\n".encode("utf-8"))
     else:
-        groundrecieversocket.send("Telecommand not accepted: failure".encode("utf-8"))
+        groundrecieversocket.send("Telecommand not accepted: failure\n".encode("utf-8"))
 
 def tc_execution(var: bool):
     if var:
@@ -30,11 +31,50 @@ def tc_complete(var: bool):
         groundrecieversocket.send("Telecommand not completed: failure".encode("utf-8"))
 
 
+# Needs change because of modes later, "2" is placeholder
+def tc_02_01():
+    if mode != 1:   # Check correct mode
+        tc_execution(False)
+        groundrecieversocket.send("Not in correct mode to execute TC.02.01\n".encode("utf-8"))
+        return
+    else:   # If correct mode, execute command
+        tc_execution(True)
+        payloadsocket.send("TC.02.01".encode("utf-8"))  # Send command to payload
+        tc_progress(True)
+        payloadpower = payloadsocket.recv(1024) # Get response from payload
+        payloadpower = payloadpower.decode("utf-8") # Convert bytes to string
+        if payloadpower == "1":    # If power is already on, send message to ground reciever
+            tc_complete(False)
+            groundrecieversocket.send("Payload power already on\n".encode("utf-8"))
+        else:                       # If power has been turned on, send message to ground reciever
+            tc_complete(True)
+            groundrecieversocket.send("Payload power on\n".encode("utf-8"))
 
+# Needs change because of modes later, "2" is placeholder
+def tc_02_02():
+    if mode != 1:   #Check correct mode
+        tc_execution(False)
+        groundrecieversocket.send("\nNot in correct mode to execute TC.02.02\n".encode("utf-8"))
+        return
+    else:   # If correct mode, execute command
+        tc_execution(True)  
+        payloadsocket.send("TC.02.02".encode("utf-8"))  # Send command to payload
+        tc_progress(True)
+        payloadpower = payloadsocket.recv(1024) # Get response from payload
+        payloadpower = payloadpower.decode("utf-8") # Convert bytes to string
+        if payloadpower == "1":   # If power is on, turn it off and send message to ground reciever
+            tc_complete(True)
+            groundrecieversocket.send("Payload power off\n".encode("utf-8"))
+        else:                       # If power is already off, send message to ground reciever
+            tc_complete(False)
+            groundrecieversocket.send("Payload power already off\n".encode("utf-8"))
 
 def run_server():
 
     while True:
+
+        payloadsocket.send(str(mode).encode("utf-8"))
+
         request1 = groundsendersocket.recv(1024)
         request1 = request1.decode("utf-8")  # convert bytes to string
 
@@ -48,21 +88,42 @@ def run_server():
             groundrecieversocket.send("closed".encode("utf-8"))
             break
 
-        print(f"Received: {request1} at {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}")
+        print(f"Received: {request1} at {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}\n")
+        groundrecieversocket.send(request1.encode("utf-8"))
 
+        match request1:
+            case "TC.02.01":
+                tc_accept(True)
+                tc_02_01()
+            case "TC.02.02":
+                tc_accept(True)
+                tc_02_02()
+            case "CLOSE":
+                #groundsendersocket.send("closed".encode("utf-8"))
+                payloadsocket.send("closed".encode("utf-8"))
+                groundrecieversocket.send("closed".encode("utf-8"))
+                break
+            case _:
+                tc_accept(False)
+                payloadsocket.send("Wrong command".encode("utf-8"))
+
+        #groundsendersocket.send("Complete".encode("utf-8"))
+
+        """
         if request1 == "poop":
-            response1 = "yes please".encode("utf-8")  # convert string to bytes
+            response1 = "yes please".encode("utf-8")  
             response2 = "yes pleaseeee".encode("utf-8")
-            tc_accept(True)
         elif request1 == "not poop":
             response1 = "aaahh shit".encode("utf-8")
             response2 = "no shit sherlock".encode("utf-8")
         else:
-            response1 = "not a valid command srry man".encode("utf-8")
-            response2 = "the fuck u on about".encode("utf-8")
+           response1 = "not a valid command srry man".encode("utf-8")
+           response2 = "the fuck u on about".encode("utf-8")
+
         groundsendersocket.send(response1)
         groundrecieversocket.send(response1)
         payloadsocket.send(response2)
+        """
 
     # close connection socket with the client
     groundsendersocket.close()
@@ -76,7 +137,8 @@ def run_server():
     payloadserver.close()
     groundreciever.close()
 
-
+# Temporary varible stuff before we finish other stuff
+mode = 1
 
 groundsender = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 payloadserver = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -104,14 +166,14 @@ print(f"Listening on {server_ip}:{groundrecieveport}")
 # Otherwise just comment out the code, and open the files manually
   
 # Paths to the files you want to open
-#file1 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Transmitter.py"
-#file2 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Payload.py"
-#file3 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Reciever.py"
+file1 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Transmitter.py"
+file2 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Payload.py"
+file3 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Reciever.py"
 
 # Command to open files in new cmd windows
-#subprocess.Popen(['start', 'cmd', '/k', 'python', file1], shell=True)
-#subprocess.Popen(['start', 'cmd', '/k', 'python', file2], shell=True)
-#subprocess.Popen(['start', 'cmd', '/k', 'python', file3], shell=True)
+subprocess.Popen(['start', 'cmd', '/k', 'python', file1], shell=True)
+subprocess.Popen(['start', 'cmd', '/k', 'python', file2], shell=True)
+subprocess.Popen(['start', 'cmd', '/k', 'python', file3], shell=True)
 
 
 # accept incoming connections

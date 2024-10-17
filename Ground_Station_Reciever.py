@@ -24,7 +24,7 @@ def run_client():
         if response.lower() == "closed":
             break
 
-        print(f"Received: {response}")
+        print(response)
 
     # close client socket (connection to the server)
     client.close()

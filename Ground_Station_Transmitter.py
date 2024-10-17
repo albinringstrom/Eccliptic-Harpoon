@@ -31,7 +31,7 @@ def run_client():
 
     # close client socket (connection to the server)
     client.close()
-    print("Connection to server closed")
+    print("Connection to server closed rn")
 
 
 run_client()

@@ -12,6 +12,16 @@ def run_client():
     client.connect((server_ip, server_port))
 
     while True:
+        
+        print('Enter TC:    \nFormat: TC.00.00)')
+        strcheck = 0
+        while strcheck == 0:
+            inputTC = input()
+            strcheck = (isinstance(inputTC, str))
+            
+            
+
+
         # input message and send it to the server
         msg = input("Enter message: ")
         client.send(msg.encode("utf-8")[:1024])

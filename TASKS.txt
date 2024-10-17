@@ -1,0 +1,18 @@
+TO DO LIST:
+
+Ground Station:
+	Define TeleCommands.
+	Validate Commands.
+	Receive TM.
+	
+
+On Board Computer:
+	Receive TM from Payload.
+	Send TC info to Payload (What a TC shall do)
+	Receice TM from Payload.
+	Send TM to Groundstation.
+
+Payload:
+	Receive TC from OBC.
+	Send TM to OBC.
+	

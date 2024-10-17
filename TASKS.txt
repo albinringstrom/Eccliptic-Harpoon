@@ -9,7 +9,7 @@ Ground Station:
 On Board Computer:
 	Receive TM from Payload.
 	Send TC info to Payload (What a TC shall do)
-	Receice TM from Payload.
+	Receive TM from Payload.
 	Send TM to Groundstation.
 
 Payload:

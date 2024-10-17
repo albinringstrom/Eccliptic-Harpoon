@@ -11,6 +11,8 @@ def run_client():
     # establish connection with server
     client.connect((server_ip, server_port))
 
+    print("Payload online")
+
     while True:
 
         # receive message from the server

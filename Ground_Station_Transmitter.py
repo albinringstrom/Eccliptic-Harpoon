@@ -1,6 +1,9 @@
 import socket
 import time
+# open up satellite.py, ground_station_reciever.py, and payload.py and run them i different terminals
+    
 
+import subprocess
 
 def run_client():
     # create a socket object

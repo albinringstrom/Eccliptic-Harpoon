@@ -5,7 +5,6 @@ Ground Station:
 	Validate Commands.
 	Receive TM.
 	
-
 On Board Computer:
 	Receive TM from Payload.
 	Send TC info to Payload (What a TC shall do)

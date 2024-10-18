@@ -1,6 +1,16 @@
 import socket
 import time
 
+def openImage():
+    # Imports PIL module
+    from PIL import Image
+
+    # open method used to open different extension image file
+    im = Image.open(r"C:\Users\albin\Pictures\moon1.png")
+
+    # This method will show image in any image viewer
+    im.show()
+
 
 def run_client():
     # create a socket object
@@ -23,6 +33,9 @@ def run_client():
             break
 
         print(f"Received: {response}")
+        openImage()
+
+        
 
     # close client socket (connection to the server)
     client.close()

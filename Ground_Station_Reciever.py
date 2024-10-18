@@ -1,6 +1,39 @@
 import socket
 import time
 
+def openImage():
+    # Imports PIL module
+    from PIL import Image
+    import numpy as np
+    import random
+    #array of picturesSS
+    moonimages = np.array([[r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143648.png"], 
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143648.png"], 
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143712.png"], 
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143721.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143806.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143846.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143906.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143916.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143926.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143936.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143943.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143953.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 144003.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 144015.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 144149.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 144235.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 144246.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 144321.png"],
+        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 144333.png",]])
+
+# open method used to open different extension image file
+    randomimage = random.randint(0, len(moonimages))
+    im = Image.open(moonimages[randomimage])
+
+    # This method will show image in any image viewer
+    im.show()
+
 
 def run_client():
     # create a socket object
@@ -23,6 +56,9 @@ def run_client():
             break
 
         print(f"Received: {response}")
+        openImage()
+
+        
 
     # close client socket (connection to the server)
     client.close()

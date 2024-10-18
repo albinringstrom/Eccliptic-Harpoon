@@ -35,6 +35,27 @@ def update_battery_status():
             is_charging = True
             charge_interval = random.randint(10, 30)
 
+# =========================
+# Thermal Simulation Settings
+# =========================
+thermal_update_interval = 30  # Time between thermal data updates in seconds
+
+def generate_thermal_data():
+    """
+    Simulate thermal data for different parts of the spacecraft.
+    """
+    # Generating realistic temperature ranges in Celsius for different components
+    # External surface in sunlight: 100°C to 120°C
+    # External surface in shadow: -170°C to -120°C
+    # Internal components: 20°C to 40°C
+    thermal_data = {
+        "external_sunlit_surface": round(random.uniform(100, 120), 2),
+        "external_shadow_surface": round(random.uniform(-170, -120), 2),
+        "internal_component_1": round(random.uniform(20, 40), 2),
+        "internal_component_2": round(random.uniform(20, 40), 2)
+    }
+    return thermal_data
+
 def send_battery_status(client_socket):
     """
     Send battery status at precise intervals.
@@ -43,11 +64,27 @@ def send_battery_status(client_socket):
         update_battery_status()
         battery_info = (
             f"TM.03.01 Battery Status:\n"
-            f"\t  Percent: {battery_percent:.1f}%\n"
-            f"\t  Charging: {is_charging}\n"
+            f"\tPercent: {battery_percent:.1f}%\n"
+            f"\tCharging: {is_charging}\n"
         )
         client_socket.send(battery_info.encode("utf-8"))
         time.sleep(battery_update_interval)  # Slower updates
+
+def send_thermal_data(client_socket):
+    """
+    Send thermal data every 30 seconds.
+    """
+    while True:
+        thermal_data = generate_thermal_data()
+        thermal_info = (
+            f"TM.03.02 Thermal Data:\n"
+            f"\t  External Sunlit Surface: {thermal_data['external_sunlit_surface']}°C\n"
+            f"\t  External Shadow Surface: {thermal_data['external_shadow_surface']}°C\n"
+            f"\t  Internal Component 1: {thermal_data['internal_component_1']}°C\n"
+            f"\t  Internal Component 2: {thermal_data['internal_component_2']}°C\n"
+        )
+        client_socket.send(thermal_info.encode("utf-8"))
+        time.sleep(thermal_update_interval)
 
 def run_server():
     server_ip = "127.0.0.1"
@@ -78,8 +115,9 @@ def run_server():
     client_socket3, client_address3 = groundreciever.accept()
     print(f"Accepted connection from {client_address3[0]}:{client_address3[1]}")
 
-    # Start thread for sending battery status
+    # Start threads for sending battery status and thermal data
     threading.Thread(target=send_battery_status, args=(client_socket3,), daemon=True).start()
+    threading.Thread(target=send_thermal_data, args=(client_socket3,), daemon=True).start()
 
     while True:
         request1 = client_socket1.recv(1024)

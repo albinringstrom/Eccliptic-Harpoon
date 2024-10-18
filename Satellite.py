@@ -65,15 +65,13 @@ def tc_02_02():
         if payloadpower == "1":   # If power is on, turn it off and send message to ground reciever
             tc_complete(True)
             groundrecieversocket.send("Payload power off\n".encode("utf-8"))
-        else:                       # If power is already off, send message to ground reciever
+        else:                        # If power is already off, send message to ground reciever
             tc_complete(False)
             groundrecieversocket.send("Payload power already off\n".encode("utf-8"))
 
 def run_server():
 
     while True:
-
-        payloadsocket.send(str(mode).encode("utf-8"))
 
         request1 = groundsendersocket.recv(1024)
         request1 = request1.decode("utf-8")  # convert bytes to string
@@ -98,32 +96,11 @@ def run_server():
             case "TC.02.02":
                 tc_accept(True)
                 tc_02_02()
-            case "CLOSE":
-                #groundsendersocket.send("closed".encode("utf-8"))
-                payloadsocket.send("closed".encode("utf-8"))
-                groundrecieversocket.send("closed".encode("utf-8"))
-                break
             case _:
                 tc_accept(False)
                 payloadsocket.send("Wrong command".encode("utf-8"))
 
-        #groundsendersocket.send("Complete".encode("utf-8"))
-
-        """
-        if request1 == "poop":
-            response1 = "yes please".encode("utf-8")  
-            response2 = "yes pleaseeee".encode("utf-8")
-        elif request1 == "not poop":
-            response1 = "aaahh shit".encode("utf-8")
-            response2 = "no shit sherlock".encode("utf-8")
-        else:
-           response1 = "not a valid command srry man".encode("utf-8")
-           response2 = "the fuck u on about".encode("utf-8")
-
-        groundsendersocket.send(response1)
-        groundrecieversocket.send(response1)
-        payloadsocket.send(response2)
-        """
+        groundsendersocket.send("\n".encode("utf-8"))
 
     # close connection socket with the client
     groundsendersocket.close()

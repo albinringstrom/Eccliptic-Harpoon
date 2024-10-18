@@ -19,11 +19,11 @@ def run_client():
         client.send(msg.encode("utf-8")[:1024])
 
         # receive message from the server
-        # response = client.recv(1024)
-        # response = response.decode("utf-8")
+        response = client.recv(1024)
+        response = response.decode("utf-8")
 
         # if server sent us "closed" in the payload, we break out of the loop and close our socket
-        if msg.lower() == "closed":
+        if response.lower() == "closed":
             break
 
         # print(f"Received: {response}")

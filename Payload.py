@@ -2,24 +2,20 @@ import socket
 import time
 
 # Check if power is on or off
-def power_check(power: int):
-    if power == 1:
-        client.send(str(1).encode("utf-8"))
-        print("Bing bong")
-    elif power == 0:
-        client.send(str(0).encode("utf-8"))
-        print("Ding dong")
+def power_check(power: str):
+    if power == "1":
+        client.send("1".encode("utf-8"))
+    elif power == "0":
+        client.send("0".encode("utf-8"))
     else:
         print("Mega-super error just occured, please no more yoghurt")
     return
 
 def run_client():
 
-    power = 1
+    power = "1"
 
     while True:
-        mode = client.recv(1024)
-        mode = mode.decode("utf-8")        
 
         # receive message from the server
         TCommand = client.recv(1024)
@@ -31,22 +27,15 @@ def run_client():
 
         print(f"Received: {TCommand}")
 
-        print(mode)
+        #print(mode)
 
         match TCommand:
             case "TC.02.01":   #Power on
                 power_check(power)
-                if mode == 1:
-                    power = 0
-                else:
-                    power = 1                
+                power = "1"
             case "TC.02.02":   #Power off
                 power_check(power)
-                if mode == 1:
-                    power = 1
-                else:
-                    power = 0
-                  
+                power = "0"
 
 
 

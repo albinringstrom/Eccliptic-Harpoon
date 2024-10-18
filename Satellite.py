@@ -45,9 +45,9 @@ def generate_thermal_data():
     Simulate thermal data for different parts of the spacecraft.
     """
     # Generating realistic temperature ranges in Celsius for different components
-    # External surface in sunlight: 100°C to 120°C
-    # External surface in shadow: -170°C to -120°C
-    # Internal components: 20°C to 40°C
+    # External surface in sunlight: 100C to 120C
+    # External surface in shadow: -170C to -120C
+    # Internal components: 20C to 40C
     thermal_data = {
         "external_sunlit_surface": round(random.uniform(100, 120), 2),
         "external_shadow_surface": round(random.uniform(-170, -120), 2),
@@ -78,10 +78,10 @@ def send_thermal_data(client_socket):
         thermal_data = generate_thermal_data()
         thermal_info = (
             f"TM.03.02 Thermal Data:\n"
-            f"\t  External Sunlit Surface: {thermal_data['external_sunlit_surface']}°C\n"
-            f"\t  External Shadow Surface: {thermal_data['external_shadow_surface']}°C\n"
-            f"\t  Internal Component 1: {thermal_data['internal_component_1']}°C\n"
-            f"\t  Internal Component 2: {thermal_data['internal_component_2']}°C\n"
+            f"\t  External Sunlit Surface: {thermal_data['external_sunlit_surface']}C\n"
+            f"\t  External Shadow Surface: {thermal_data['external_shadow_surface']}C\n"
+            f"\t  Internal Component 1: {thermal_data['internal_component_1']}C\n"
+            f"\t  Internal Component 2: {thermal_data['internal_component_2']}C\n"
         )
         client_socket.send(thermal_info.encode("utf-8"))
         time.sleep(thermal_update_interval)

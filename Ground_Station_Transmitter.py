@@ -1,6 +1,7 @@
 import socket
 import time
 import numpy as np
+import sys
 
 #array containing telecommands
 tc_matrix = np.array([['TC.02.01', 'Turn On Payload'],
@@ -40,6 +41,7 @@ def create_and_validateTC():
         #Option to close program
         if inputTC == 'close':
             sendmessage(inputTC)
+            break
         else:
             #convert input to uppercase
             inputTC = inputTC.upper()
@@ -51,8 +53,12 @@ def create_and_validateTC():
                     print('\n' + inputTC + ' "' + row[1] +'" command')
                     return inputTC
 
-            #if no TC matched:    
+            #if no TC matched:
             print('ERROR: TC not found.')
+
+    client.close()
+    print("Connection to server closed rn")
+    sys.exit()
 
 
 def run_client():
@@ -64,19 +70,27 @@ def run_client():
     # establish connection with server
     client.connect((server_ip, server_port))
 
+def close_client():
+    client.close()
+    print("Connection to server closed rn")
+    sys.exit()
+
 def execution_time():
     while True:
         #take execution time from user
-        print("\nEnter execution time: \nFormat: hh:mm:ss")
+        print('\nEnter execution time: \nFormat: hh:mm:ss ,\nEnter "discard" to discard TC')
         extime = input()
 
-        #if format is correct
-        try:
-            time.strptime(extime, '%H:%M:%S')
-            return extime
-        #if format is incorrect
-        except ValueError:
-            print("\nERROR: Invalid time.\n")
+        if extime == 'discard':
+            main()
+        else:
+            #if format is correct
+            try:
+                time.strptime(extime, '%H:%M:%S')
+                return extime
+            #if format is incorrect
+            except ValueError:
+                print("\nERROR: Invalid time.\n")
 
 def main():
     while True:

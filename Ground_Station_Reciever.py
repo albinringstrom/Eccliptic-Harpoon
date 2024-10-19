@@ -44,6 +44,8 @@ def run_client():
     # establish connection with server
     client.connect((server_ip, server_port))
 
+    print("Reciever online")
+
     while True:
         # input message and send it to the server
 

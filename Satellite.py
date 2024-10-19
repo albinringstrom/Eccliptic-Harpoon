@@ -2,9 +2,15 @@ from http import server
 import socket
 import time
 import subprocess
+import random
+import threading
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
 
+
+# =========================
+# Telecommand Acception Functions
+# =========================
 
 def tc_accept(var: bool):
     if var:
@@ -23,8 +29,12 @@ def tc_progress(var: bool):
         groundrecieversocket.send("Telecommand in progress: success".encode("utf-8"))
     else:
         groundrecieversocket.send("Telecommand not in progress: failure".encode("utf-8"))
-import random
-import threading
+
+def tc_complete(var: bool):
+    if var:
+        groundrecieversocket.send("Telecommand completed: success".encode("utf-8"))
+    else:
+        groundrecieversocket.send("Telecommand not completed: failure".encode("utf-8"))
 
 # =========================
 # Battery Simulation Settings
@@ -78,14 +88,12 @@ def generate_thermal_data():
         "internal_component_2": round(random.uniform(20, 40), 2)
     }
     return thermal_data
-def tc_complete(var: bool):
-    if var:
-        groundrecieversocket.send("Telecommand completed: success".encode("utf-8"))
-    else:
-        groundrecieversocket.send("Telecommand not completed: failure".encode("utf-8"))
 
+# =========================
+# Telecommand power on/off Functions
+# =========================
 
-# Needs change because of modes later, "2" is placeholder
+# Needs change because of modes later, "1" is placeholder
 def tc_02_01():
     if mode != 1:   # Check correct mode
         tc_execution(False)
@@ -104,7 +112,7 @@ def tc_02_01():
             tc_complete(True)
             groundrecieversocket.send("Payload power on\n".encode("utf-8"))
 
-# Needs change because of modes later, "2" is placeholder
+# Needs change because of modes later, "1" is placeholder
 def tc_02_02():
     if mode != 1:   #Check correct mode
         tc_execution(False)
@@ -123,6 +131,9 @@ def tc_02_02():
             tc_complete(False)
             groundrecieversocket.send("Payload power already off\n".encode("utf-8"))
 
+# =========================
+# Battery and Thermal Data Functions
+# =========================
 
 def send_battery_status(client_socket):
     """
@@ -154,10 +165,14 @@ def send_thermal_data(client_socket):
         client_socket.send(thermal_info.encode("utf-8"))
         time.sleep(thermal_update_interval)
 
+# =========================
+# Server Function
+# =========================
+
 def run_server():
 
-    threading.Thread(target=send_battery_status, args=(client_socket3,), daemon=True).start()
-    threading.Thread(target=send_thermal_data, args=(client_socket3,), daemon=True).start()
+    threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
+    threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
 
     while True:
 
@@ -178,10 +193,10 @@ def run_server():
         groundrecieversocket.send(request1.encode("utf-8"))
 
         match request1:
-            case "TC.02.01":
+            case "TC.02.01TXX:XX:XX":
                 tc_accept(True)
                 tc_02_01()
-            case "TC.02.02":
+            case "TC.02.02TXX:XX:XX":
                 tc_accept(True)
                 tc_02_02()
             case _:
@@ -204,6 +219,10 @@ def run_server():
 
 # Temporary varible stuff before we finish other stuff
 mode = 1
+
+# =========================
+# Server Setup
+# =========================
 
 groundsender = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 payloadserver = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

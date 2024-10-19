@@ -132,6 +132,60 @@ def tc_02_02():
             groundrecieversocket.send("Payload power already off\n".encode("utf-8"))
 
 # =========================
+# Telecommand camera on/off Functions
+# =========================
+
+def tc_02_03():
+    if mode != 1:   #Check correct mode
+        tc_execution(False)
+        groundrecieversocket.send("\nNot in correct mode to execute TC.02.03\n".encode("utf-8"))
+        return
+    else:   # If correct mode, execute command
+        tc_execution(True)  
+        payloadsocket.send("TC.02.03".encode("utf-8"))  # Send command to payload
+        payloadpower = payloadsocket.recv(1024) # Get payloadpower response from payload
+        payloadpower = payloadpower.decode("utf-8") # Convert bytes to string
+        if payloadpower == "0":   
+            tc_progress(False)
+            groundrecieversocket.send("Payload power is off, camera unavailable\n".encode("utf-8"))
+        else:                        
+            tc_progress(True)
+            camerapower = payloadsocket.recv(1024) # Get camerapower response from payload
+            camerapower = camerapower.decode("utf-8") # Convert bytes to string
+            if camerapower == "0":   # If camera is off, turn it on and send message to ground reciever
+                tc_complete(True)
+                groundrecieversocket.send("Camera on\n".encode("utf-8"))
+            else:                       
+                tc_complete(False)  # If camera is already on, send message to ground reciever
+                groundrecieversocket.send("Camera already on\n".encode("utf-8"))
+
+def tc_02_04():
+    if mode != 1:   #Check correct mode
+        tc_execution(False)
+        groundrecieversocket.send("\nNot in correct mode to execute TC.02.04\n".encode("utf-8"))
+        return
+    else:   # If correct mode, execute command
+        tc_execution(True)  
+        payloadsocket.send("TC.02.04".encode("utf-8"))  # Send command to payload
+        payloadpower = payloadsocket.recv(1024) # Get payloadpower response from payload
+        payloadpower = payloadpower.decode("utf-8") # Convert bytes to string
+        if payloadpower == "0":   
+            tc_progress(False)
+            groundrecieversocket.send("Payload power is off, camera unavailable\n".encode("utf-8"))
+        else:                        
+            tc_progress(True)
+            camerapower = payloadsocket.recv(1024) # Get camerapower response from payload
+            camerapower = camerapower.decode("utf-8") # Convert bytes to string
+            if camerapower == "1":   # If camera is on, turn it off and send message to ground reciever
+                tc_complete(True)
+                groundrecieversocket.send("Camera off\n".encode("utf-8"))
+            else:                       
+                tc_complete(False)  # If camera is already off, send message to ground reciever
+                groundrecieversocket.send("Camera already off\n".encode("utf-8"))
+
+
+
+# =========================
 # Battery and Thermal Data Functions
 # =========================
 
@@ -199,6 +253,12 @@ def run_server():
             case "TC.02.02TXX:XX:XX":
                 tc_accept(True)
                 tc_02_02()
+            case "TC.02.03TXX:XX:XX":
+                tc_accept(True)
+                tc_02_03()
+            case "TC.02.04TXX:XX:XX":
+                tc_accept(True)
+                tc_02_04()
             case _:
                 tc_accept(False)
                 payloadsocket.send("Wrong command".encode("utf-8"))

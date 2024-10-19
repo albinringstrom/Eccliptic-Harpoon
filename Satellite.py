@@ -7,7 +7,6 @@ import threading
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
 
-
 # =========================
 # Telecommand Acception Functions
 # =========================
@@ -94,7 +93,7 @@ def generate_thermal_data():
 # =========================
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_01():
+def tc_02_01(mode):
     if mode != 1:   # Check correct mode
         tc_execution(False)
         groundrecieversocket.send("Not in correct mode to execute TC.02.01\n".encode("utf-8"))
@@ -113,7 +112,7 @@ def tc_02_01():
             groundrecieversocket.send("Payload power on\n".encode("utf-8"))
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_02():
+def tc_02_02(mode):
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.02\n".encode("utf-8"))
@@ -135,7 +134,8 @@ def tc_02_02():
 # Telecommand camera on/off Functions
 # =========================
 
-def tc_02_03():
+# Needs change because of modes later, "1" is placeholder
+def tc_02_03(mode):
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.03\n".encode("utf-8"))
@@ -159,7 +159,8 @@ def tc_02_03():
                 tc_complete(False)  # If camera is already on, send message to ground reciever
                 groundrecieversocket.send("Camera already on\n".encode("utf-8"))
 
-def tc_02_04():
+# Needs change because of modes later, "1" is placeholder
+def tc_02_04(mode):
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.04\n".encode("utf-8"))
@@ -183,7 +184,70 @@ def tc_02_04():
                 tc_complete(False)  # If camera is already off, send message to ground reciever
                 groundrecieversocket.send("Camera already off\n".encode("utf-8"))
 
+# =========================
+# Telecommand mode Functions
+# =========================
 
+def tc_18_01(mode):
+    tc_execution(True)
+    if mode != 0:
+        tc_progress(False)
+        groundrecieversocket.send("Spacecraft already on\n".encode("utf-8"))
+    else:
+        tc_progress(True)
+        groundrecieversocket.send("Spacecraft on, entering safe mode\n".encode("utf-8"))
+        tc_complete(True)
+        
+def tc_18_02(mode):
+    tc_execution(True)
+    if mode == 1:
+        print(mode)
+        tc_progress(False)
+        groundrecieversocket.send("Spacecraft already in safe mode\n".encode("utf-8"))
+    else:
+        tc_progress(True)
+        groundrecieversocket.send("Spacecraft in safe mode\n".encode("utf-8"))
+        tc_complete(True)
+
+def tc_18_03(mode):
+    tc_execution(True)
+    if mode == 2:
+        tc_progress(False)
+        groundrecieversocket.send("Spacecraft already in moon pointing mode\n".encode("utf-8"))
+    else:
+        tc_progress(True)
+        groundrecieversocket.send("Spacecraft in moon pointing mode\n".encode("utf-8"))
+        tc_complete(True)
+
+def tc_18_04(mode):
+    tc_execution(True)
+    if mode == 3:
+        tc_progress(False)
+        groundrecieversocket.send("Spacecraft already in sun pointing mode\n".encode("utf-8"))
+    else:
+        tc_progress(True)
+        groundrecieversocket.send("Spacecraft in sun pointing mode\n".encode("utf-8"))
+        tc_complete(True)
+
+def tc_18_05(mode):
+    tc_execution(True)
+    if mode == 4:
+        tc_progress(False)
+        groundrecieversocket.send("Spacecraft already in manoeuvre mode\n".encode("utf-8"))
+    else:
+        tc_progress(True)
+        groundrecieversocket.send("Spacecraft in manoeuvre mode\n".encode("utf-8"))
+        tc_complete(True)
+
+def tc_18_06(mode):
+    tc_execution(True)
+    if mode == 5:
+        tc_progress(False)
+        groundrecieversocket.send("Spacecraft already in data-sending mode\n".encode("utf-8"))
+    else:
+        tc_progress(True)
+        groundrecieversocket.send("Spacecraft in data-sending mode\n".encode("utf-8"))
+        tc_complete(True)
 
 # =========================
 # Battery and Thermal Data Functions
@@ -225,6 +289,8 @@ def send_thermal_data(client_socket):
 
 def run_server():
 
+    mode = 0
+
     threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
     threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
 
@@ -243,25 +309,58 @@ def run_server():
             groundrecieversocket.send("closed".encode("utf-8"))
             break
 
-        print(f"Received: {request1} at {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}\n")
-        groundrecieversocket.send(request1.encode("utf-8"))
-
-        match request1:
-            case "TC.02.01TXX:XX:XX":
-                tc_accept(True)
-                tc_02_01()
-            case "TC.02.02TXX:XX:XX":
-                tc_accept(True)
-                tc_02_02()
-            case "TC.02.03TXX:XX:XX":
-                tc_accept(True)
-                tc_02_03()
-            case "TC.02.04TXX:XX:XX":
-                tc_accept(True)
-                tc_02_04()
-            case _:
-                tc_accept(False)
-                payloadsocket.send("Wrong command".encode("utf-8"))
+        if request1 != "discard".upper():
+            print(f"Received: {request1} at {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}\n")
+            groundrecieversocket.send(request1.encode("utf-8"))
+        
+        if request1 == "discard".upper():
+            discard = 0
+        elif mode == 0 and request1 != "TC.18.01TXX:XX:XX":
+            tc_accept(False)
+            groundrecieversocket.send("Satellite not on\n".encode("utf-8"))
+        else:
+            match request1:
+                case "TC.02.01TXX:XX:XX":
+                    tc_accept(True)
+                    tc_02_01(mode)
+                case "TC.02.02TXX:XX:XX":
+                    tc_accept(True)
+                    tc_02_02(mode)
+                case "TC.02.03TXX:XX:XX":
+                    tc_accept(True)
+                    tc_02_03(mode)
+                case "TC.02.04TXX:XX:XX":
+                    tc_accept(True)
+                    tc_02_04(mode)
+                case "TC.18.01TXX:XX:XX":
+                    tc_accept(True)
+                    tc_18_01(mode)
+                    mode = 1
+                case "TC.18.02TXX:XX:XX":
+                    tc_accept(True)
+                    tc_18_02(mode)
+                    mode = 1
+                    print(mode)
+                case "TC.18.03TXX:XX:XX":
+                    tc_accept(True)
+                    tc_18_03(mode)
+                    mode = 2
+                    print(mode)
+                case "TC.18.04TXX:XX:XX":
+                    tc_accept(True)
+                    tc_18_04(mode)
+                    mode = 3
+                case "TC.18.05TXX:XX:XX":
+                    tc_accept(True)
+                    tc_18_05(mode)
+                    mode = 4
+                case "TC.18.06TXX:XX:XX":
+                    tc_accept(True)
+                    tc_18_06(mode)
+                    mode = 5
+                case _:
+                    tc_accept(False)
+                    payloadsocket.send("Wrong command".encode("utf-8"))
 
         groundsendersocket.send("\n".encode("utf-8"))
 
@@ -278,7 +377,7 @@ def run_server():
     groundreciever.close()
 
 # Temporary varible stuff before we finish other stuff
-mode = 1
+
 
 # =========================
 # Server Setup

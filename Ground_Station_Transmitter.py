@@ -115,14 +115,15 @@ def main():
         if confirmTC == 'Y':
             time.sleep(0.5)
             print('\n' + inputTC +', ' + extime + ' confirmed.')
+            
+            #Format TC to send
+            TC = inputTC +'T'+ extime
+
+            #call send function
+            sendmessage(TC)
         else:
             print('\n' +inputTC +', ' + extime + ' discarded.')
-
-        #Format TC to send
-        TC = inputTC +'T'+ extime
-
-        #call send function
-        sendmessage(TC)
+            sendmessage("Discard".upper())
 
         # receive message from the server
         response = client.recv(1024)

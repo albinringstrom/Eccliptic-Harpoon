@@ -1,11 +1,63 @@
 from http import server
+import sched
 import socket
 import time
 import subprocess
 import random
 import threading
+from urllib import request
+import numpy as np
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
+
+# =========================
+# Schedule Array Function
+# =========================
+def schedule_array(request1,i):
+    timetag = tc_timetag(request1)
+    tc = tc_telecommand(request1)
+    
+    schedule_array = [['commands'], ['timetags']]
+    schedule_array[0][i] = tc
+    schedule_array[1][i] = timetag
+
+    i += 1
+    return schedule_array
+
+# =========================
+# Telecommand Time Tag Extraction Function
+# =========================
+def tc_timetag(request1):
+    timetag = request1[9:]
+    print('timetag = ' + timetag)
+    return timetag
+
+# =========================
+# Telecommand TC Extraction Function
+# =========================
+def tc_telecommand(request1):
+    tc = request1[0:8]
+    print('tc = ' + tc)
+    return tc
+
+# =========================
+# Comparison of timetag and onboardtime Function
+# =========================
+#def obtime_eq_tag(schedule_array):
+
+    #take in onboard time
+#    OBT = onboard_time()
+#    onboardtimestring = OBT[1]
+#    print(onboardtimestring)
+#
+#    while True:
+#        for x in schedule_array[1]:
+#            if onboardtimestring == x:
+#                return x
+            
+        
+
+    
 
 # =========================
 # Telecommand Acception Functions
@@ -259,8 +311,25 @@ def onboard_time():
         if onboardtime[i] < 0:
             onboardtime[i] += 60
             onboardtime[i-1] -= 1
-    return onboardtime
 
+    #take each element of integer array and conv to str
+    onboardhour = str(onboardtime[0])
+    onboardminute = str(onboardtime[1])
+    onboardsecond = str(onboardtime[2])
+
+    #add a 0 beforevalue if length == 1
+    if len(onboardhour) == 1:
+        onboardhour = '0' + onboardhour
+    if len(onboardminute) == 1:
+        onboardminute = '0' + onboardminute
+    if len(onboardsecond) == 1:
+        onboardsecond = '0' + onboardsecond
+
+    #convert to correct format XX:XX:XX
+    onboardtimestring = onboardhour + ':' + onboardminute + ':' +  onboardsecond 
+    #return array with onboardtime int array and string
+    OBT = [onboardtime, onboardtimestring]
+    return OBT
 
 
 
@@ -305,6 +374,8 @@ def send_thermal_data(client_socket):
 def run_server():
 
     mode = 0
+    #initial value for schedule_array
+    i = 0
 
     threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
     threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
@@ -334,6 +405,10 @@ def run_server():
             tc_accept(False)
             groundrecieversocket.send("Satellite not on\n".encode("utf-8"))
         else:
+            #run schedule function to insert tc and timetag in array
+            schedule = schedule_array(request1, i)
+            #Supposed to return the command to run
+            #finalTC = obtime_eq_tag(schedule)
             match request1:
                 case "TC.02.01TXX:XX:XX":
                     tc_accept(True)
@@ -425,14 +500,14 @@ print(f"Listening on {server_ip}:{groundrecieveport}")
 # Otherwise just comment out the code, and open the files manually
   
 # Paths to the files you want to open
-file1 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Transmitter.py"
-file2 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Payload.py"
-file3 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Reciever.py"
+#file1 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Transmitter.py"
+#file2 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Payload.py"
+#file3 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Reciever.py"
 
 # Command to open files in new cmd windows
-subprocess.Popen(['start', 'cmd', '/k', 'python', file1], shell=True)
-subprocess.Popen(['start', 'cmd', '/k', 'python', file2], shell=True)
-subprocess.Popen(['start', 'cmd', '/k', 'python', file3], shell=True)
+#subprocess.Popen(['start', 'cmd', '/k', 'python', file1], shell=True)
+#subprocess.Popen(['start', 'cmd', '/k', 'python', file2], shell=True)
+#subprocess.Popen(['start', 'cmd', '/k', 'python', file3], shell=True)
 
 
 # accept incoming connections

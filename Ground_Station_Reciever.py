@@ -1,6 +1,7 @@
 import socket
 import time
 
+
 # =========================
 # Open Image Function
 # =========================

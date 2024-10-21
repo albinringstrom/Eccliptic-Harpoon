@@ -11,6 +11,7 @@ from tkinter.messagebox import YESNO
 
 t0 = time.time()
 time_switch = 0
+Seq_count = 0 # sequence counter
 
 # =========================
 # Telecommand Acception Functions
@@ -456,13 +457,20 @@ def send_thermal_data(client_socket):
 
 def run_server():
 
-    global mode
+    global Seq_count, mode
+
     mode = 0
 
     while True:
 
         request1 = groundsendersocket.recv(1024)
         request1 = request1.decode("utf-8")  # convert bytes to string
+
+        # Sequence stuff
+        Seq_count += 1
+        Seq_count_ground = request1[17:]
+        request1 = request1[0:17]
+
 
         # if we receive "close" from the client, then we break
         # out of the loop and close the connection
@@ -483,6 +491,9 @@ def run_server():
         elif mode == 0 and request1 != "TC.18.01TXX:XX:XX":
             tc_accept(False)
             groundrecieversocket.send("Satellite not on\n".encode("utf-8"))
+        elif str(Seq_count) != str(Seq_count_ground):
+            tc_accept(False)
+            groundrecieversocket.send("Sequence counter not correct\n".encode("utf-8"))
         else:
             match request1:
                 case "TC.02.01TXX:XX:XX":

@@ -3,6 +3,8 @@ import time
 import numpy as np
 import sys
 
+Seq_count = 0
+
 #array containing telecommands
 tc_matrix = np.array([['TC.02.01', 'Turn On Payload'],
     ['TC.02.02', 'Turn Off Payload'],
@@ -35,7 +37,10 @@ client.connect((server_ip, server_port))
 
 #Function that sends TC to OBC
 def sendmessage(TC):
-    #input message and send it to the server
+    global Seq_count # Sequence counter
+    # input message and send it to the server
+    Seq_count += 1
+    TC = TC + f"{Seq_count}"
     client.send(TC.encode("utf-8")[:1024])
 
     #check if confirmation is needed

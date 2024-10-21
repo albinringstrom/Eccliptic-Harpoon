@@ -1,5 +1,6 @@
 import socket
 import time
+import random
 
 # Check if power is on or off
 def power_check(power: str):
@@ -10,6 +11,20 @@ def power_check(power: str):
     else:               # If power is neither on or off, we print an error message
         print("Mega-super error just occured, please no more yoghurt")
     return
+
+
+# Send an image to the server
+def image_send():
+    transferred = 0
+    transfer_rate = random.randint(5, 10) # Random transfer rate between 5 and 10 MB/s
+    file_size = random.randint(30, 50)     # Random file size between 30 and 50 MB
+    client.send(str(file_size/transfer_rate).encode("utf-8")) # Send the time it takes to transfer the image to the server
+    while transferred < file_size:
+        client.send(f"Transferred {transferred:.2f}/{file_size} MB ({(transferred/file_size)*100:.2f}%)".encode("utf-8"))
+        transferred = transferred + transfer_rate
+        time.sleep(1)
+    client.send(f"Transferred {file_size:.2f}/{file_size} MB ({(file_size/file_size)*100:.2f}%)".encode("utf-8"))
+        
 
 def run_client():
 
@@ -46,7 +61,13 @@ def run_client():
                 if power == "1":    # Only if power is on do we check if camera is on/off
                     power_check(camera_power)
                     camera_power = "0"
-
+            case "TC.13.01":
+                power_check(power)
+                if power == "1":
+                    power_check(camera_power)
+                    if camera_power == "1":
+                        image_send()
+                    
     # close client socket (connection to the server)
     client.close()
     print("Connection to server closed")

@@ -200,6 +200,25 @@ def tc_02_04(mode):
                 groundrecieversocket.send("Camera already off\n".encode("utf-8"))
 
 # =========================
+# On-Board Time Functions
+# =========================
+
+def tc_09_01(mode):
+
+    global time_switch
+
+    time_switch = 1
+
+
+def tc_09_02(mode):
+
+    global t0
+
+    t_now = generate_onboard_time()
+    tstring = f"On-board time: {t_now} seconds"
+    groundrecieversocket.send(str(tstring).encode("utf-8"))
+
+# =========================
 # Large data transfer Functions
 # =========================
 
@@ -236,36 +255,11 @@ def tc_13_01(mode):
                 image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
                 image_progress = image_progress.decode("utf-8") # Convert bytes to string
                 groundrecieversocket.send(image_progress.encode("utf-8"))
-                tc_complete(True)
-
-
-        
-        
+                tc_complete(True)     
 
 # =========================
 # Telecommand mode Functions
 # =========================
-
-# =========================
-# On-Board Time Functions
-# =========================
-
-
-def tc_09_01(mode):
-
-    global time_switch
-
-    time_switch = 1
-
-
-def tc_09_02(mode):
-
-    global t0
-
-    t_now = generate_onboard_time()
-    tstring = f"On-board time: {t_now} seconds"
-    groundrecieversocket.send(str(tstring).encode("utf-8"))
-
 
 def tc_18_01(mode):
     global t0

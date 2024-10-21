@@ -4,6 +4,7 @@ import time
 import subprocess
 import random
 import threading
+import math
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
 
@@ -185,6 +186,49 @@ def tc_02_04(mode):
                 groundrecieversocket.send("Camera already off\n".encode("utf-8"))
 
 # =========================
+# Large data transfer Functions
+# =========================
+
+# Need change because of modes later, "1" is placeholder
+def tc_13_01(mode):
+    if mode != 1:
+        tc_execution(False)
+        groundrecieversocket.send("Not in correct mode to execute TC.13.01\n".encode("utf-8"))
+        return
+    else:
+        tc_execution(True)
+        payloadsocket.send("TC.13.01".encode("utf-8"))
+        payloadpower = payloadsocket.recv(1024) # Get payloadpower response from payload
+        payloadpower = payloadpower.decode("utf-8") # Convert bytes to string
+        if payloadpower == "0":
+            tc_progress(False)
+            groundrecieversocket.send("Payload power is off, image data transfer unavailable\n".encode("utf-8"))
+        else:
+            tc_progress(True)
+            camerapower = payloadsocket.recv(1024)
+            camerapower = camerapower.decode("utf-8")
+            if camerapower == "0":
+                tc_progress(False)
+                groundrecieversocket.send("Camera is off, data transfer unavailable\n".encode("utf-8"))
+            else:
+                tc_progress(True)
+                groundrecieversocket.send("Image data transfer started\n".encode("utf-8"))
+                transfer_time = payloadsocket.recv(1024) # Get transfer time from payload
+                transfer_time = transfer_time.decode("utf-8") # Convert bytes to string
+                for i in range(math.ceil(float(transfer_time))):
+                    image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
+                    image_progress = image_progress.decode("utf-8") # Convert bytes to string
+                    groundrecieversocket.send(image_progress.encode("utf-8"))
+                image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
+                image_progress = image_progress.decode("utf-8") # Convert bytes to string
+                groundrecieversocket.send(image_progress.encode("utf-8"))
+                tc_complete(True)
+
+
+        
+        
+
+# =========================
 # Telecommand mode Functions
 # =========================
 
@@ -261,9 +305,6 @@ def onboard_time():
             onboardtime[i-1] -= 1
     return onboardtime
 
-
-
-
 # =========================
 # Battery and Thermal Data Functions
 # =========================
@@ -327,7 +368,7 @@ def run_server():
         if request1 != "discard".upper():
             print(f"Received: {request1} at {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}\n")
             groundrecieversocket.send(request1.encode("utf-8"))
-        
+
         if request1 == "discard".upper():
             discard = 0
         elif mode == 0 and request1 != "TC.18.01TXX:XX:XX":
@@ -347,6 +388,9 @@ def run_server():
                 case "TC.02.04TXX:XX:XX":
                     tc_accept(True)
                     tc_02_04(mode)
+                case "TC.13.01TXX:XX:XX":
+                    tc_accept(True)
+                    tc_13_01(mode)
                 case "TC.18.01TXX:XX:XX":
                     tc_accept(True)
                     tc_18_01(mode)

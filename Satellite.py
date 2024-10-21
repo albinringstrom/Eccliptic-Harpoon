@@ -290,11 +290,12 @@ def tc_18_01():
         t0 = time.time()
         t0 = math.floor(t0)
 
+        tc_complete(True)
+
         # Start sending housekeeping
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
 
-        tc_complete(True)
         
 def tc_18_02():
     global mode
@@ -427,9 +428,10 @@ def send_battery_status(client_socket):
             OB_time = f"{generate_onboard_time()} seconds"
         battery_info = (
             f"TM.03.01 Battery Status:\n"
-            f"\tPercent: {battery_percent:.1f}%\n"
-            f"\tCharging: {is_charging}\n"
-            f"\t {tajm} {OB_time}\n"
+            f"\t  Percent: {battery_percent:.1f}%\n"
+            f"\t  Charging: {is_charging}\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
         )
         client_socket.send(battery_info.encode("utf-8"))
         time.sleep(battery_update_interval)  # Slower updates
@@ -453,6 +455,7 @@ def send_thermal_data(client_socket):
             f"\t  Internal Component 1: {thermal_data['internal_component_1']}C\n"
             f"\t  Internal Component 2: {thermal_data['internal_component_2']}C\n"
             f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
         )
         client_socket.send(thermal_info.encode("utf-8"))
         time.sleep(thermal_update_interval)

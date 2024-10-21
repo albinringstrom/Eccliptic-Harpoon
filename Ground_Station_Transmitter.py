@@ -23,7 +23,8 @@ tc_matrix = np.array([['TC.02.01', 'Turn On Payload'],
     ['TC.18.03', 'Enter Moon-Pointing Mode'],
     ['TC.18.04', 'Enter Sun-Pointing Mode'],
     ['TC.18.05', 'Enter Manoeuvre Mode'],
-    ['TC.18.06', 'Enter Data-Sending Mode'],])
+    ['TC.18.06', 'Enter Data-Sending Mode'],
+    ['TC.69.69', 'Enter Super Mega Death Mode']])
 
 
 # create a socket object

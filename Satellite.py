@@ -282,6 +282,7 @@ def tc_18_01():
         groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft on, entering safe mode\n".encode("utf-8"))
         mode = 1
 
@@ -308,6 +309,7 @@ def tc_18_02():
         groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in safe mode\n".encode("utf-8"))
         tc_complete(True)
         mode = 1
@@ -324,6 +326,7 @@ def tc_18_03():
         groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in moon pointing mode\n".encode("utf-8"))
         tc_complete(True)
         mode = 2
@@ -340,6 +343,7 @@ def tc_18_04():
         groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in sun pointing mode\n".encode("utf-8"))
         tc_complete(True)
         mode = 3
@@ -356,6 +360,7 @@ def tc_18_05():
         groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in manoeuvre mode\n".encode("utf-8"))
         tc_complete(True)
         mode = 4
@@ -372,6 +377,7 @@ def tc_18_06():
         groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in data-sending mode\n".encode("utf-8"))
         tc_complete(True)
         mode = 5

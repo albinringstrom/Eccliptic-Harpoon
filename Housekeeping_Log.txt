@@ -1,0 +1,34 @@
+TM.03.01 Battery Status:
+	  Percent: 80.0%
+	  Charging: False
+	  On-Board Time: 0 seconds
+	 TM.03.02 Thermal Data:
+	  External Sunlit Surface: 101.75C
+	  External Shadow Surface: -133.93C
+	  Internal Component 1: 21.45C
+	  Internal Component 2: 33.93C
+	  On-Board Time: 0 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 79.5%
+	  Charging: True
+	  On-Board Time: 50 seconds
+	 TM.03.02 Thermal Data:
+	  External Sunlit Surface: 102.23C
+	  External Shadow Surface: -150.08C
+	  Internal Component 1: 37.4C
+	  Internal Component 2: 24.31C
+	  On-Board Time: 50 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 79.1%
+	  Charging: True
+	  Local time: 17:18:22
+	  On-Board Time: 100
+
+TM.03.02 Thermal Data:
+	  External Sunlit Surface: 117.83C
+	  External Shadow Surface: -158.8C
+	  Internal Component 1: 24.72C
+	  Internal Component 2: 34.97C
+	  Local time: 17:18:22
+	  On-Board Time: 100
+

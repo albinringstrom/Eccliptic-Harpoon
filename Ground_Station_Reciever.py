@@ -11,7 +11,7 @@ import time
 #    from PIL import Image
 #    import numpy as np
 #    import random
-#    #array of picturesSS
+#    #array of pictures
 #    moonimages = np.array([[r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143648.png"], 
 #        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143648.png"], 
 #        [r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 143712.png"], 

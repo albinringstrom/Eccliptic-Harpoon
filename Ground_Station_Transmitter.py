@@ -10,13 +10,14 @@ tc_matrix = np.array([['TC.02.01', 'Turn On Payload'],
     ['TC.02.04', 'Turn Off Camera'],
     ['TC.03.01', 'Overall System Health Status Request'],
     ['TC.03.02', 'Change Housekeeping Rate'],
+    ['TC.09.01', 'Switch to local time'],
     ['TC.13.01', 'Send Image Data'],
     ['TC.18.01', 'Turn on spacecraft'],
     ['TC.18.02', 'Enter SAFE Mode'],
     ['TC.18.03', 'Enter Moon-Pointing Mode'],
     ['TC.18.04', 'Enter Sun-Pointing Mode'],
     ['TC.18.05', 'Enter Manoeuvre Mode'],
-    ['TC.18.06', 'Enter Data-Sending Mode']])
+    ['TC.18.06', 'Enter Data-Sending Mode'],])
 
 
 # create a socket object
@@ -107,7 +108,6 @@ def main():
             extime = execution_time()
         else:
             extime = 'XX:XX:XX'
-
         #confirm TC before sending
         print('\nDo you want to send: ' + inputTC +'T'+ extime +'?\n' )
         confirmTC = input('Y/N?')

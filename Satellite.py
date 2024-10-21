@@ -5,6 +5,7 @@ import subprocess
 import random
 import threading
 import math
+from tkinter.messagebox import YESNO
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
 
@@ -267,15 +268,21 @@ def tc_09_02(mode):
     groundrecieversocket.send(str(tstring).encode("utf-8"))
 
 
-def tc_18_01(mode):
+def tc_18_01():
     global t0
+    global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.01")
+
     if mode != 0:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already on\n".encode("utf-8"))
+    elif yesno == 0:        
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         groundrecieversocket.send("Spacecraft on, entering safe mode\n".encode("utf-8"))
+        mode = 1
 
         # Initialize on board time
         t0 = time.time()
@@ -287,56 +294,101 @@ def tc_18_01(mode):
 
         tc_complete(True)
         
-def tc_18_02(mode):
+def tc_18_02():
+    global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.02")
+
     if mode == 1:
         print(mode)
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in safe mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         groundrecieversocket.send("Spacecraft in safe mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 1
 
-def tc_18_03(mode):
+def tc_18_03():
+    global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.03")
+
     if mode == 2:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in moon pointing mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         groundrecieversocket.send("Spacecraft in moon pointing mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 2
 
-def tc_18_04(mode):
+def tc_18_04():
+    global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.04")
+
     if mode == 3:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in sun pointing mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         groundrecieversocket.send("Spacecraft in sun pointing mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 3
 
-def tc_18_05(mode):
+def tc_18_05():
+    global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.05")
+
     if mode == 4:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in manoeuvre mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         groundrecieversocket.send("Spacecraft in manoeuvre mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 4
 
-def tc_18_06(mode):
+def tc_18_06():
+    global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.06")
+
     if mode == 5:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in data-sending mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         groundrecieversocket.send("Spacecraft in data-sending mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 5
+
+
+def tc_69_69(mode):
+    # Use Popen to stream the output line by line
+    process = subprocess.Popen(['curl', 'ascii.live/rick'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+    # Continuously read the output and print it as it arrives
+    try:
+        for line in process.stdout:
+            print(line, end='')  # Print each line as it is received
+    except KeyboardInterrupt:
+        print("\nProcess interrupted.")
+    finally:
+        process.stdout.close()  # Close the stream when done
+        process.wait() # Wait for the process to finish
 
 
 def tm_05_03(command):
@@ -404,6 +456,7 @@ def send_thermal_data(client_socket):
 
 def run_server():
 
+    global mode
     mode = 0
 
     while True:
@@ -455,30 +508,25 @@ def run_server():
                     tc_13_01(mode)
                 case "TC.18.01TXX:XX:XX":
                     tc_accept(True)
-                    tc_18_01(mode)
-                    mode = 1
+                    tc_18_01()
                 case "TC.18.02TXX:XX:XX":
                     tc_accept(True)
-                    tc_18_02(mode)
-                    mode = 1
-                    print(mode)
+                    tc_18_02()
                 case "TC.18.03TXX:XX:XX":
                     tc_accept(True)
-                    tc_18_03(mode)
-                    mode = 2
-                    print(mode)
+                    tc_18_03()
                 case "TC.18.04TXX:XX:XX":
                     tc_accept(True)
-                    tc_18_04(mode)
-                    mode = 3
+                    tc_18_04()
                 case "TC.18.05TXX:XX:XX":
                     tc_accept(True)
-                    tc_18_05(mode)
-                    mode = 4
+                    tc_18_05()
                 case "TC.18.06TXX:XX:XX":
                     tc_accept(True)
-                    tc_18_06(mode)
-                    mode = 5
+                    tc_18_06()
+                case "TC.69.69TXX:XX:XX":
+                    tc_accept(True)
+                    tc_69_69(mode)
                 case _:
                     tc_accept(False)
                     payloadsocket.send("Wrong command".encode("utf-8"))

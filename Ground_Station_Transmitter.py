@@ -37,6 +37,19 @@ def sendmessage(TC):
     #input message and send it to the server
     client.send(TC.encode("utf-8")[:1024])
 
+    #check if confirmation is needed
+    if f"{TC[3]}{TC[4]}" == "18":
+        response = client.recv(1024)
+        response = response.decode("utf-8")
+        print(f"Received: {response}")
+        confirmation = input()
+        client.send(confirmation.encode("utf-8")[:1024])
+        return
+    else:
+        return
+
+
+
 #Function that checks if input TC exists
 def create_and_validateTC():
     while True:

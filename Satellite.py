@@ -250,6 +250,21 @@ def tc_18_06(mode):
         tc_complete(True)
 
 # =========================
+# Onboard time function
+# =========================
+
+def onboard_time():
+    onboardtime = [time.localtime()[3]-starttime[0],time.localtime()[4]-starttime[1],time.localtime()[5]-starttime[2]]
+    for i in [1,2]:
+        if onboardtime[i] < 0:
+            onboardtime[i] += 60
+            onboardtime[i-1] -= 1
+    return onboardtime
+
+
+
+
+# =========================
 # Battery and Thermal Data Functions
 # =========================
 
@@ -378,6 +393,7 @@ def run_server():
 
 # Temporary varible stuff before we finish other stuff
 
+starttime = [time.localtime()[3],time.localtime()[4],time.localtime()[5]]
 
 # =========================
 # Server Setup

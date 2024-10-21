@@ -43,19 +43,65 @@ def tc_telecommand(request1):
 # =========================
 # Comparison of timetag and onboardtime Function
 # =========================
-#def obtime_eq_tag(schedule_array):
+def obtime_eq_tag():
+    global schedule
 
     #take in onboard time
-#    OBT = onboard_time()
-#    onboardtimestring = OBT[1]
-#    print(onboardtimestring)
-#
-#    while True:
-#        for x in schedule_array[1]:
-#            if onboardtimestring == x:
-#                return x
+    OBT = onboard_time()
+    onboardtimestring = OBT[1]
+
+    while True:
+        for t in schedule[1]:
+            if onboardtimestring == schedule[1][i]:
+                execute_tc(schedule[0][i])
+                
+                
             
         
+def execute_tc():
+    match finalTC:
+    case "TC.02.01":
+        tc_accept(True)
+        tc_02_01(mode)
+    case "TC.02.02":
+        tc_accept(True)
+        tc_02_02(mode)
+    case "TC.02.03":
+        tc_accept(True)
+        tc_02_03(mode)
+    case "TC.02.04":
+        tc_accept(True)
+        tc_02_04(mode)
+    case "TC.18.01":
+        tc_accept(True)
+        tc_18_01(mode)
+        mode = 1
+    case "TC.18.02":
+        tc_accept(True)
+        tc_18_02(mode)
+        mode = 1
+        print(mode)
+    case "TC.18.03TXX:XX:XX":
+        tc_accept(True)
+        tc_18_03(mode)
+        mode = 2
+        print(mode)
+    case "TC.18.04TXX:XX:XX":
+        tc_accept(True)
+        tc_18_04(mode)
+        mode = 3
+    case "TC.18.05TXX:XX:XX":
+        tc_accept(True)
+        tc_18_05(mode)
+        mode = 4
+    case "TC.18.06TXX:XX:XX":
+        tc_accept(True)
+        tc_18_06(mode)
+        mode = 5
+    case _:
+        tc_accept(False)
+        payloadsocket.send("Wrong command".encode("utf-8"))
+
 
     
 
@@ -249,6 +295,8 @@ def tc_18_01(mode):
         tc_progress(True)
         groundrecieversocket.send("Spacecraft on, entering safe mode\n".encode("utf-8"))
         tc_complete(True)
+        threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
+        threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
         
 def tc_18_02(mode):
     tc_execution(True)
@@ -375,10 +423,10 @@ def run_server():
 
     mode = 0
     #initial value for schedule_array
+    schedule = []
     i = 0
 
-    threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
-    threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
+    
 
     while True:
 
@@ -408,49 +456,8 @@ def run_server():
             #run schedule function to insert tc and timetag in array
             schedule = schedule_array(request1, i)
             #Supposed to return the command to run
-            #finalTC = obtime_eq_tag(schedule)
-            match request1:
-                case "TC.02.01TXX:XX:XX":
-                    tc_accept(True)
-                    tc_02_01(mode)
-                case "TC.02.02TXX:XX:XX":
-                    tc_accept(True)
-                    tc_02_02(mode)
-                case "TC.02.03TXX:XX:XX":
-                    tc_accept(True)
-                    tc_02_03(mode)
-                case "TC.02.04TXX:XX:XX":
-                    tc_accept(True)
-                    tc_02_04(mode)
-                case "TC.18.01TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_01(mode)
-                    mode = 1
-                case "TC.18.02TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_02(mode)
-                    mode = 1
-                    print(mode)
-                case "TC.18.03TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_03(mode)
-                    mode = 2
-                    print(mode)
-                case "TC.18.04TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_04(mode)
-                    mode = 3
-                case "TC.18.05TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_05(mode)
-                    mode = 4
-                case "TC.18.06TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_06(mode)
-                    mode = 5
-                case _:
-                    tc_accept(False)
-                    payloadsocket.send("Wrong command".encode("utf-8"))
+            finalTC = obtime_eq_tag(schedule)
+
 
         groundsendersocket.send("\n".encode("utf-8"))
 
@@ -518,4 +525,7 @@ print(f"Accepted connection from {payloadaddress[0]}:{payloadaddress[1]}")
 groundrecieversocket, groundrecieveraddress = groundreciever.accept()
 print(f"Accepted connection from {groundrecieveraddress[0]}:{groundrecieveraddress[1]}")
 
-run_server()
+def bootup():
+    threading.Thread(target=run_server).start()
+
+bootup()

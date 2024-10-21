@@ -19,21 +19,21 @@ def tc_accept(var: bool):
 
 def tc_execution(var: bool):
     if var:
-        groundrecieversocket.send("Telecommand executed: success".encode("utf-8"))
+        groundrecieversocket.send("Telecommand execution started: success\n".encode("utf-8"))
     else:
-        groundrecieversocket.send("Telecommand not executed: failure".encode("utf-8"))
+        groundrecieversocket.send("Telecommand not executed: failure\n".encode("utf-8"))
 
 def tc_progress(var: bool):
     if var:
-        groundrecieversocket.send("Telecommand in progress: success".encode("utf-8"))
+        groundrecieversocket.send("Telecommand in progress: success\n".encode("utf-8"))
     else:
-        groundrecieversocket.send("Telecommand not in progress: failure".encode("utf-8"))
+        groundrecieversocket.send("Telecommand not in progress: failure\n".encode("utf-8"))
 
 def tc_complete(var: bool):
     if var:
-        groundrecieversocket.send("Telecommand completed: success".encode("utf-8"))
+        groundrecieversocket.send("Telecommand completed: success\n".encode("utf-8"))
     else:
-        groundrecieversocket.send("Telecommand not completed: failure".encode("utf-8"))
+        groundrecieversocket.send("Telecommand not completed: failure\n".encode("utf-8"))
 
 # =========================
 # Battery Simulation Settings
@@ -41,7 +41,7 @@ def tc_complete(var: bool):
 battery_percent = random.randint(40, 80)  # Initial battery percentage
 is_charging = False  # Initial charging state
 charge_interval = random.randint(10, 30)  # Duration for charging
-battery_update_interval = 10  # Time between status updates every 10 seconds
+battery_update_interval = 50  # Time between status updates every 10 seconds
 
 def update_battery_status():
     """
@@ -70,7 +70,7 @@ def update_battery_status():
 # =========================
 # Thermal Simulation Settings
 # =========================
-thermal_update_interval = 30  # Time between thermal data updates in seconds
+thermal_update_interval = 50  # Time between thermal data updates in seconds
 
 def generate_thermal_data():
     """

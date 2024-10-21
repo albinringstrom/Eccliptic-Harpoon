@@ -239,8 +239,8 @@ def tc_13_01(mode):
                 tc_complete(True)
 
 
-        
-        
+
+
 
 # =========================
 # Telecommand mode Functions
@@ -255,7 +255,11 @@ def tc_09_01(mode):
 
     global time_switch
 
-    time_switch = 1
+    if time_switch == 0:
+        time_switch = 1
+    else:
+        time_switch = 0
+
 
 
 def tc_09_02(mode):
@@ -338,6 +342,18 @@ def tc_18_06(mode):
         groundrecieversocket.send("Spacecraft in data-sending mode\n".encode("utf-8"))
         tc_complete(True)
 
+
+def tm_05_03(command):
+    groundrecieversocket.send(f"Are you sure you want to execute {command}\n Y/N: ".encode("utf-8"))
+    groundsendersocket.send(f"Are you sure you want to execute {command}\n Y/N: ".encode("utf-8"))
+    confirmation = groundsendersocket.recv(1024)
+    confirmation = confirmation.decode("utf-8")
+    if confirmation == "Y" or confirmation == "y":
+        return 1
+    else:
+        return 0
+
+
 # =========================
 # Battery and Thermal Data Functions
 # =========================
@@ -412,7 +428,7 @@ def run_server():
         if request1 != "discard".upper():
             print(f"Received: {request1} at {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}\n")
             groundrecieversocket.send(request1.encode("utf-8"))
-
+        
         if request1 == "discard".upper():
             discard = 0
         elif mode == 0 and request1 != "TC.18.01TXX:XX:XX":

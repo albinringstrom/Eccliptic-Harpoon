@@ -8,9 +8,13 @@ import math
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
 
+t0 = time.time()
+time_switch = 0
+
 # =========================
 # Telecommand Acception Functions
 # =========================
+
 
 def tc_accept(var: bool):
     if var:
@@ -92,6 +96,16 @@ def generate_thermal_data():
 # =========================
 # Telecommand power on/off Functions
 # =========================
+
+
+def generate_onboard_time():
+    global t0
+
+    time_now = time.time()
+    time_now = math.floor(time_now)
+    t_now = time_now - t0
+    return t_now
+
 
 # Needs change because of modes later, "1" is placeholder
 def tc_02_01(mode):
@@ -232,7 +246,29 @@ def tc_13_01(mode):
 # Telecommand mode Functions
 # =========================
 
+# =========================
+# On-Board Time Functions
+# =========================
+
+
+def tc_09_01(mode):
+
+    global time_switch
+
+    time_switch = 1
+
+
+def tc_09_02(mode):
+
+    global t0
+
+    t_now = generate_onboard_time()
+    tstring = f"On-board time: {t_now} seconds"
+    groundrecieversocket.send(str(tstring).encode("utf-8"))
+
+
 def tc_18_01(mode):
+    global t0
     tc_execution(True)
     if mode != 0:
         tc_progress(False)
@@ -240,6 +276,15 @@ def tc_18_01(mode):
     else:
         tc_progress(True)
         groundrecieversocket.send("Spacecraft on, entering safe mode\n".encode("utf-8"))
+
+        # Initialize on board time
+        t0 = time.time()
+        t0 = math.floor(t0)
+
+        # Start sending housekeeping
+        threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
+        threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
+
         tc_complete(True)
         
 def tc_18_02(mode):
@@ -294,18 +339,6 @@ def tc_18_06(mode):
         tc_complete(True)
 
 # =========================
-# Onboard time function
-# =========================
-
-def onboard_time():
-    onboardtime = [time.localtime()[3]-starttime[0],time.localtime()[4]-starttime[1],time.localtime()[5]-starttime[2]]
-    for i in [1,2]:
-        if onboardtime[i] < 0:
-            onboardtime[i] += 60
-            onboardtime[i-1] -= 1
-    return onboardtime
-
-# =========================
 # Battery and Thermal Data Functions
 # =========================
 
@@ -315,10 +348,17 @@ def send_battery_status(client_socket):
     """
     while True:
         update_battery_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
         battery_info = (
             f"TM.03.01 Battery Status:\n"
             f"\tPercent: {battery_percent:.1f}%\n"
             f"\tCharging: {is_charging}\n"
+            f"\t {tajm} {OB_time}\n"
         )
         client_socket.send(battery_info.encode("utf-8"))
         time.sleep(battery_update_interval)  # Slower updates
@@ -329,12 +369,19 @@ def send_thermal_data(client_socket):
     """
     while True:
         thermal_data = generate_thermal_data()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
         thermal_info = (
             f"TM.03.02 Thermal Data:\n"
             f"\t  External Sunlit Surface: {thermal_data['external_sunlit_surface']}C\n"
             f"\t  External Shadow Surface: {thermal_data['external_shadow_surface']}C\n"
             f"\t  Internal Component 1: {thermal_data['internal_component_1']}C\n"
             f"\t  Internal Component 2: {thermal_data['internal_component_2']}C\n"
+            f"\t  {tajm} {OB_time}\n"
         )
         client_socket.send(thermal_info.encode("utf-8"))
         time.sleep(thermal_update_interval)
@@ -346,9 +393,6 @@ def send_thermal_data(client_socket):
 def run_server():
 
     mode = 0
-
-    threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
-    threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
 
     while True:
 
@@ -388,6 +432,12 @@ def run_server():
                 case "TC.02.04TXX:XX:XX":
                     tc_accept(True)
                     tc_02_04(mode)
+                case "TC.09.01TXX:XX:XX":
+                    tc_accept(True)
+                    tc_09_01(mode)
+                case "TC.09.02TXX:XX:XX":
+                    tc_accept(True)
+                    tc_09_02(mode)
                 case "TC.13.01TXX:XX:XX":
                     tc_accept(True)
                     tc_13_01(mode)

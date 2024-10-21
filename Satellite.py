@@ -255,7 +255,11 @@ def tc_09_01(mode):
 
     global time_switch
 
-    time_switch = 1
+    if time_switch == 0:
+        time_switch = 1
+    else:
+        time_switch = 0
+
 
 
 def tc_09_02(mode):
@@ -337,6 +341,17 @@ def tc_18_06(mode):
         tc_progress(True)
         groundrecieversocket.send("Spacecraft in data-sending mode\n".encode("utf-8"))
         tc_complete(True)
+
+
+def tm_05_03(command):
+    groundrecieversocket.send(f"Are you sure you want to execute {command}\n Y/N: ".encode("utf-8"))
+    groundsendersocket.send(f"Are you sure you want to execute {command}\n Y/N: ".encode("utf-8"))
+    confirmation = groundsendersocket.recv(1024)
+    confirmation = confirmation.decode("utf-8")
+    if confirmation == "Y" or confirmation == "y":
+        return 1
+    else:
+        return 0
 
 
 # =========================

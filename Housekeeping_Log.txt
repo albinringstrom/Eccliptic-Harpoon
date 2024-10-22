@@ -1,34 +1,699 @@
 TM.03.01 Battery Status:
-	  Percent: 80.0%
-	  Charging: False
+	  Percent: 74.2%
+	  Charging: True
 	  On-Board Time: 0 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 101.75C
-	  External Shadow Surface: -133.93C
-	  Internal Component 1: 21.45C
-	  Internal Component 2: 33.93C
+	  Camera: 34.73C
+	  CPU: 31.82C
+	  PDU: 25.37C
+	  On-Board Time: 0 seconds
+	  0
+TM.03.03 Attitude Status:
+	  Roll: -122.85 degrees
+	  Pitch: 65.97 degrees
+	  Yaw: 47.14 degrees
+	  On-Board Time: 0 seconds
+	  0
+TM.03.04 Data Storage Status:
+	  Used Storage: 225.0 MB
+	  Total Capacity: 100000 MB
 	  On-Board Time: 0 seconds
 	 TM.03.01 Battery Status:
-	  Percent: 79.5%
+	  Percent: 74.6%
 	  Charging: True
 	  On-Board Time: 50 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 102.23C
-	  External Shadow Surface: -150.08C
-	  Internal Component 1: 37.4C
-	  Internal Component 2: 24.31C
+	  Camera: 34.3C
+	  CPU: 37.53C
+	  PDU: 23.55C
 	  On-Board Time: 50 seconds
-	 TM.03.01 Battery Status:
-	  Percent: 79.1%
-	  Charging: True
-	  Local time: 17:18:22
-	  On-Board Time: 100
-
+	  50
+TM.03.03 Attitude Status:
+	  Roll: -143.56 degrees
+	  Pitch: 89.22 degrees
+	  Yaw: -97.15 degrees
+	  On-Board Time: 50 seconds
+	  50
+TM.03.04 Data Storage Status:
+	  Used Storage: 250.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 50 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 58.29 degrees
+	  Pitch: -10.9 degrees
+	  Yaw: -24.89 degrees
+	  On-Board Time: 100 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 275.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 100 seconds
+	  100
 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 117.83C
-	  External Shadow Surface: -158.8C
-	  Internal Component 1: 24.72C
-	  Internal Component 2: 34.97C
-	  Local time: 17:18:22
-	  On-Board Time: 100
-
+	  Camera: 22.08C
+	  CPU: 22.53C
+	  PDU: 22.15C
+	  On-Board Time: 100 seconds
+	  100
+TM.03.01 Battery Status:
+	  Percent: 75.3%
+	  Charging: True
+	  On-Board Time: 100 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 300.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 150 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 157.61 degrees
+	  Pitch: -17.14 degrees
+	  Yaw: -134.21 degrees
+	  On-Board Time: 150 seconds
+	  150
+TM.03.01 Battery Status:
+	  Percent: 75.6%
+	  Charging: True
+	  On-Board Time: 150 seconds
+	  150
+TM.03.02 Thermal Data:
+	  Camera: 22.49C
+	  CPU: 29.42C
+	  PDU: 25.26C
+	  On-Board Time: 150 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 325.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 200 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -9.01 degrees
+	  Pitch: -14.96 degrees
+	  Yaw: -99.17 degrees
+	  On-Board Time: 200 seconds
+	  200
+TM.03.01 Battery Status:
+	  Percent: 75.9%
+	  Charging: True
+	  On-Board Time: 200 seconds
+	  200
+TM.03.02 Thermal Data:
+	  Camera: 32.59C
+	  CPU: 26.31C
+	  PDU: 35.95C
+	  On-Board Time: 200 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -176.12 degrees
+	  Pitch: -33.19 degrees
+	  Yaw: -64.94 degrees
+	  On-Board Time: 250 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 350.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 250 seconds
+	  250
+TM.03.01 Battery Status:
+	  Percent: 76.0%
+	  Charging: True
+	  On-Board Time: 250 seconds
+	  250
+TM.03.02 Thermal Data:
+	  Camera: 23.45C
+	  CPU: 21.18C
+	  PDU: 35.12C
+	  On-Board Time: 250 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 27.73 degrees
+	  Pitch: -79.98 degrees
+	  Yaw: -64.74 degrees
+	  On-Board Time: 300 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 375.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 300 seconds
+	  300
+TM.03.01 Battery Status:
+	  Percent: 76.5%
+	  Charging: True
+	  On-Board Time: 300 seconds
+	  300
+TM.03.02 Thermal Data:
+	  Camera: 22.75C
+	  CPU: 23.28C
+	  PDU: 27.89C
+	  On-Board Time: 300 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -175.71 degrees
+	  Pitch: -11.23 degrees
+	  Yaw: 160.55 degrees
+	  On-Board Time: 350 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 400.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 350 seconds
+	  350
+TM.03.02 Thermal Data:
+	  Camera: 25.62C
+	  CPU: 30.84C
+	  PDU: 20.87C
+	  On-Board Time: 350 seconds
+	  350
+TM.03.01 Battery Status:
+	  Percent: 77.2%
+	  Charging: True
+	  On-Board Time: 350 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -93.2 degrees
+	  Pitch: 9.43 degrees
+	  Yaw: -23.48 degrees
+	  On-Board Time: 400 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 425.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 400 seconds
+	  400
+TM.03.01 Battery Status:
+	  Percent: 77.5%
+	  Charging: True
+	  On-Board Time: 400 seconds
+	  400
+TM.03.02 Thermal Data:
+	  Camera: 23.43C
+	  CPU: 38.16C
+	  PDU: 23.62C
+	  On-Board Time: 400 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 450.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 450 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -24.31 degrees
+	  Pitch: 80.79 degrees
+	  Yaw: -44.38 degrees
+	  On-Board Time: 450 seconds
+	  450
+TM.03.01 Battery Status:
+	  Percent: 78.3%
+	  Charging: True
+	  On-Board Time: 450 seconds
+	  450
+TM.03.02 Thermal Data:
+	  Camera: 29.81C
+	  CPU: 28.07C
+	  PDU: 31.8C
+	  On-Board Time: 450 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 475.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 500 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -24.47 degrees
+	  Pitch: -86.28 degrees
+	  Yaw: -30.99 degrees
+	  On-Board Time: 500 seconds
+	  500
+TM.03.01 Battery Status:
+	  Percent: 78.5%
+	  Charging: True
+	  On-Board Time: 500 seconds
+	  500
+TM.03.02 Thermal Data:
+	  Camera: 35.44C
+	  CPU: 31.9C
+	  PDU: 25.86C
+	  On-Board Time: 500 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 500.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 550 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -135.85 degrees
+	  Pitch: 73.83 degrees
+	  Yaw: 13.47 degrees
+	  On-Board Time: 550 seconds
+	  550
+TM.03.01 Battery Status:
+	  Percent: 79.4%
+	  Charging: True
+	  On-Board Time: 550 seconds
+	  550
+TM.03.02 Thermal Data:
+	  Camera: 24.08C
+	  CPU: 32.75C
+	  PDU: 31.84C
+	  On-Board Time: 550 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 31.36C
+	  CPU: 37.44C
+	  PDU: 31.82C
+	  On-Board Time: 600 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 80.2%
+	  Charging: True
+	  On-Board Time: 600 seconds
+	  600
+TM.03.03 Attitude Status:
+	  Roll: 53.62 degrees
+	  Pitch: -43.68 degrees
+	  Yaw: 88.09 degrees
+	  On-Board Time: 600 seconds
+	  600
+TM.03.04 Data Storage Status:
+	  Used Storage: 525.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 600 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -179.37 degrees
+	  Pitch: -52.6 degrees
+	  Yaw: -1.23 degrees
+	  On-Board Time: 650 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 550.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 650 seconds
+	  650
+TM.03.01 Battery Status:
+	  Percent: 80.2%
+	  Charging: True
+	  On-Board Time: 650 seconds
+	  650
+TM.03.02 Thermal Data:
+	  Camera: 32.3C
+	  CPU: 30.81C
+	  PDU: 24.04C
+	  On-Board Time: 650 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 33.79C
+	  CPU: 33.75C
+	  PDU: 28.23C
+	  On-Board Time: 700 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 225.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 700 seconds
+	  700
+TM.03.01 Battery Status:
+	  Percent: 80.3%
+	  Charging: True
+	  On-Board Time: 700 seconds
+	  700
+TM.03.03 Attitude Status:
+	  Roll: -45.04 degrees
+	  Pitch: 68.89 degrees
+	  Yaw: -56.49 degrees
+	  On-Board Time: 700 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 32.97C
+	  CPU: 33.52C
+	  PDU: 34.47C
+	  On-Board Time: 750 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -56.63 degrees
+	  Pitch: -37.8 degrees
+	  Yaw: 137.58 degrees
+	  On-Board Time: 750 seconds
+	  750
+TM.03.01 Battery Status:
+	  Percent: 80.5%
+	  Charging: True
+	  On-Board Time: 750 seconds
+	  750
+TM.03.04 Data Storage Status:
+	  Used Storage: 250.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 750 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 21.58C
+	  CPU: 21.03C
+	  PDU: 22.0C
+	  On-Board Time: 800 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 80.6%
+	  Charging: True
+	  On-Board Time: 800 seconds
+	  800
+TM.03.03 Attitude Status:
+	  Roll: 172.08 degrees
+	  Pitch: 62.79 degrees
+	  Yaw: 103.64 degrees
+	  On-Board Time: 800 seconds
+	  800
+TM.03.04 Data Storage Status:
+	  Used Storage: 275.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 800 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 28.93C
+	  CPU: 31.03C
+	  PDU: 37.97C
+	  On-Board Time: 850 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 300.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 850 seconds
+	  850
+TM.03.03 Attitude Status:
+	  Roll: -65.12 degrees
+	  Pitch: -82.15 degrees
+	  Yaw: -4.95 degrees
+	  On-Board Time: 850 seconds
+	  850
+TM.03.01 Battery Status:
+	  Percent: 81.2%
+	  Charging: True
+	  On-Board Time: 850 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 325.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 900 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -106.59 degrees
+	  Pitch: -50.85 degrees
+	  Yaw: 78.81 degrees
+	  On-Board Time: 900 seconds
+	  900
+TM.03.01 Battery Status:
+	  Percent: 82.1%
+	  Charging: True
+	  On-Board Time: 900 seconds
+	  900
+TM.03.02 Thermal Data:
+	  Camera: 33.84C
+	  CPU: 33.81C
+	  PDU: 29.06C
+	  On-Board Time: 900 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -144.7 degrees
+	  Pitch: -10.35 degrees
+	  Yaw: 113.83 degrees
+	  On-Board Time: 950 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 350.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 950 seconds
+	  950
+TM.03.02 Thermal Data:
+	  Camera: 39.9C
+	  CPU: 31.83C
+	  PDU: 32.85C
+	  On-Board Time: 950 seconds
+	  950
+TM.03.01 Battery Status:
+	  Percent: 82.4%
+	  Charging: True
+	  On-Board Time: 950 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 58.97 degrees
+	  Pitch: -78.85 degrees
+	  Yaw: 113.15 degrees
+	  On-Board Time: 1000 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 23.55C
+	  CPU: 38.93C
+	  PDU: 34.04C
+	  On-Board Time: 1000 seconds
+	  1000
+TM.03.01 Battery Status:
+	  Percent: 82.7%
+	  Charging: True
+	  On-Board Time: 1000 seconds
+	  1000
+TM.03.04 Data Storage Status:
+	  Used Storage: 375.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1000 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -16.39 degrees
+	  Pitch: -63.94 degrees
+	  Yaw: 101.8 degrees
+	  On-Board Time: 1050 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 37.08C
+	  CPU: 31.82C
+	  PDU: 30.36C
+	  On-Board Time: 1050 seconds
+	  1050
+TM.03.01 Battery Status:
+	  Percent: 82.8%
+	  Charging: True
+	  On-Board Time: 1050 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 400.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1050 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 179.42 degrees
+	  Pitch: -41.6 degrees
+	  Yaw: 78.88 degrees
+	  On-Board Time: 1100 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 37.02C
+	  CPU: 20.59C
+	  PDU: 35.12C
+	  On-Board Time: 1100 seconds
+	  1100
+TM.03.04 Data Storage Status:
+	  Used Storage: 425.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1100 seconds
+	  1100
+TM.03.01 Battery Status:
+	  Percent: 82.0%
+	  Charging: False
+	  On-Board Time: 1100 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -82.07 degrees
+	  Pitch: -30.02 degrees
+	  Yaw: 171.21 degrees
+	  On-Board Time: 1150 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 26.33C
+	  CPU: 29.37C
+	  PDU: 29.4C
+	  On-Board Time: 1150 seconds
+	  1150
+TM.03.04 Data Storage Status:
+	  Used Storage: 450.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1150 seconds
+	  1150
+TM.03.01 Battery Status:
+	  Percent: 81.5%
+	  Charging: True
+	  On-Board Time: 1150 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 37.89C
+	  CPU: 29.71C
+	  PDU: 20.75C
+	  On-Board Time: 1200 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 170.85 degrees
+	  Pitch: -83.58 degrees
+	  Yaw: -87.51 degrees
+	  On-Board Time: 1200 seconds
+	  1200
+TM.03.04 Data Storage Status:
+	  Used Storage: 475.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1200 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 81.5%
+	  Charging: True
+	  On-Board Time: 1200 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 500.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1250 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 30.38C
+	  CPU: 32.81C
+	  PDU: 31.08C
+	  On-Board Time: 1250 seconds
+	  1250
+TM.03.01 Battery Status:
+	  Percent: 82.1%
+	  Charging: True
+	  On-Board Time: 1250 seconds
+	  1250
+TM.03.03 Attitude Status:
+	  Roll: 78.66 degrees
+	  Pitch: 9.65 degrees
+	  Yaw: -59.41 degrees
+	  On-Board Time: 1250 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 33.63C
+	  CPU: 22.9C
+	  PDU: 20.69C
+	  On-Board Time: 1300 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 84.66 degrees
+	  Pitch: 37.89 degrees
+	  Yaw: -73.38 degrees
+	  On-Board Time: 1300 seconds
+	  1300
+TM.03.01 Battery Status:
+	  Percent: 81.2%
+	  Charging: False
+	  On-Board Time: 1300 seconds
+	  1300
+TM.03.04 Data Storage Status:
+	  Used Storage: 525.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1300 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 38.11C
+	  CPU: 34.49C
+	  PDU: 34.43C
+	  On-Board Time: 1350 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 80.5%
+	  Charging: False
+	  On-Board Time: 1350 seconds
+	  1350
+TM.03.04 Data Storage Status:
+	  Used Storage: 550.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1350 seconds
+	  1350
+TM.03.03 Attitude Status:
+	  Roll: -7.77 degrees
+	  Pitch: -24.8 degrees
+	  Yaw: 82.88 degrees
+	  On-Board Time: 1350 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 24.53C
+	  CPU: 38.71C
+	  PDU: 32.55C
+	  On-Board Time: 1400 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 575.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1400 seconds
+	  1400
+TM.03.03 Attitude Status:
+	  Roll: -16.59 degrees
+	  Pitch: -36.51 degrees
+	  Yaw: 90.98 degrees
+	  On-Board Time: 1400 seconds
+	  1400
+TM.03.01 Battery Status:
+	  Percent: 80.3%
+	  Charging: True
+	  On-Board Time: 1400 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 24.24C
+	  CPU: 35.91C
+	  PDU: 23.09C
+	  On-Board Time: 1450 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 177.09 degrees
+	  Pitch: -71.51 degrees
+	  Yaw: -137.45 degrees
+	  On-Board Time: 1450 seconds
+	  1450
+TM.03.04 Data Storage Status:
+	  Used Storage: 600.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1450 seconds
+	  1450
+TM.03.01 Battery Status:
+	  Percent: 80.9%
+	  Charging: True
+	  On-Board Time: 1450 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 22.0C
+	  CPU: 24.69C
+	  PDU: 32.27C
+	  On-Board Time: 1500 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -113.14 degrees
+	  Pitch: 56.74 degrees
+	  Yaw: 169.79 degrees
+	  On-Board Time: 1500 seconds
+	  1500
+TM.03.04 Data Storage Status:
+	  Used Storage: 625.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1500 seconds
+	  1500
+TM.03.01 Battery Status:
+	  Percent: 81.7%
+	  Charging: True
+	  On-Board Time: 1500 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: 125.12 degrees
+	  Pitch: -47.97 degrees
+	  Yaw: -6.12 degrees
+	  On-Board Time: 1550 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 37.91C
+	  CPU: 20.56C
+	  PDU: 30.8C
+	  On-Board Time: 1550 seconds
+	  1550
+TM.03.01 Battery Status:
+	  Percent: 81.9%
+	  Charging: True
+	  On-Board Time: 1550 seconds
+	  1550
+TM.03.04 Data Storage Status:
+	  Used Storage: 650.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1550 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 82.5%
+	  Charging: True
+	  On-Board Time: 1600 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -104.48 degrees
+	  Pitch: -47.45 degrees
+	  Yaw: -133.09 degrees
+	  On-Board Time: 1600 seconds
+	  1600
+TM.03.02 Thermal Data:
+	  Camera: 37.74C
+	  CPU: 20.5C
+	  PDU: 31.61C
+	  On-Board Time: 1600 seconds
+	  1600
+TM.03.04 Data Storage Status:
+	  Used Storage: 675.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1600 seconds
+	 TM.03.04 Data Storage Status:
+	  Used Storage: 700.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1650 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 38.35C
+	  CPU: 30.66C
+	  PDU: 31.84C
+	  On-Board Time: 1650 seconds
+	  1650
+TM.03.01 Battery Status:
+	  Percent: 82.6%
+	  Charging: True
+	  On-Board Time: 1650 seconds
+	  1650
+TM.03.03 Attitude Status:
+	  Roll: 48.67 degrees
+	  Pitch: -81.13 degrees
+	  Yaw: 18.05 degrees
+	  On-Board Time: 1650 seconds
+	 TM.03.03 Attitude Status:
+	  Roll: -63.39 degrees
+	  Pitch: 37.35 degrees
+	  Yaw: 166.48 degrees
+	  On-Board Time: 1700 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 83.0%
+	  Charging: True
+	  On-Board Time: 1700 seconds
+	  1700
+TM.03.04 Data Storage Status:
+	  Used Storage: 725.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 1700 seconds
+	  1700
+TM.03.02 Thermal Data:
+	  Camera: 37.98C
+	  CPU: 36.72C
+	  PDU: 31.51C
+	  On-Board Time: 1700 seconds
+	 

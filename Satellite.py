@@ -269,13 +269,14 @@ def tc_13_01(mode):
                 groundrecieversocket.send("Image data transfer started\n".encode("utf-8"))
                 transfer_time = payloadsocket.recv(1024) # Get transfer time from payload
                 transfer_time = transfer_time.decode("utf-8") # Convert bytes to string
-                for i in range(math.ceil(float(transfer_time))):
-                    image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
-                    image_progress = image_progress.decode("utf-8") # Convert bytes to string
-                    groundrecieversocket.send(image_progress.encode("utf-8"))
-                image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
-                image_progress = image_progress.decode("utf-8") # Convert bytes to string
-                groundrecieversocket.send(image_progress.encode("utf-8"))
+                #for i in range(math.ceil(float(transfer_time))):
+                #    image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
+                #    image_progress = image_progress.decode("utf-8") # Convert bytes to string
+                #    groundrecieversocket.send(image_progress.encode("utf-8"))
+                #image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
+                #image_progress = image_progress.decode("utf-8") # Convert bytes to string
+                #groundrecieversocket.send(image_progress.encode("utf-8"))
+                reset_storage_status()  # Reset storage after sending image data
                 tc_complete(True)     
 
 # =========================
@@ -334,7 +335,7 @@ def tc_18_01():
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_attitude_status, args=(groundrecieversocket,), daemon=True).start()
-
+        threading.Thread(target=send_storage_status, args=(groundrecieversocket,), daemon=True).start()
         
 def tc_18_02():
     global mode
@@ -497,6 +498,53 @@ def send_thermal_data(client_socket):
         )
         client_socket.send(thermal_info.encode("utf-8"))
         time.sleep(thermal_update_interval)
+
+# =========================
+# Data Storage Status Settings
+# =========================
+storage_update_interval = 50  # Time between storage data updates in seconds
+storage_capacity = 10000  # Total storage capacity in MB
+reserved_storage = 200  # Initial used storage in MB
+used_storage = reserved_storage  # Used storage in MB
+image_data_size = 25  # Size of image data in MB
+
+def update_storage_status():
+    """
+    Simulate data storage status.
+    """
+    global used_storage
+    # Increment used storage
+    used_storage = min(storage_capacity, used_storage + image_data_size)
+    return used_storage
+
+def reset_storage_status():
+    """
+    Reset data storage status after sending image data.
+    """
+    global used_storage
+    used_storage = max(0, reserved_storage)
+
+def send_storage_status(client_socket):
+    """
+    Send data storage status at precise intervals.
+    """
+    while True:
+        used_storage = update_storage_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
+        storage_info = (
+            f"TM.03.04 Data Storage Status:\n"
+            f"\t  Used Storage: {used_storage:.1f} MB\n"
+            f"\t  Total Capacity: {storage_capacity} MB\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
+        )
+        client_socket.send(storage_info.encode("utf-8"))
+        time.sleep(storage_update_interval)
 
 # =========================
 # Server Function

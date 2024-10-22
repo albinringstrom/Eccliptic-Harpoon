@@ -37,7 +37,7 @@ def openImage():
         r"C:\Users\albin\Pictures\MOON_SURFACE\Screenshot 2024-10-18 144333.png"]
 
     #open method used to open different extension image file
-    randomimage = random.randint(0, len(moonimages))
+    randomimage = random.randint(0, len(moonimages)-1)
     im = Image.open(moonimages[randomimage])
 
     # This method will show image in any image viewer
@@ -72,8 +72,8 @@ def run_client():
 
         # openImage()
 
-
-        print(f"Received: {response}")
+        if response[0:5] != "TM.03":
+            print(f"Received: {response}")
 
         if response == 'image_sent':
             openImage()
@@ -81,10 +81,9 @@ def run_client():
 
         # unreadable code that works
         check_word = f"{response.rsplit(' ', 2)[0]}"
-        # print(check_word[-3])
         if response[0:5] == "TM.03":
+            print(f"{response.rsplit(' ', 1)[0]}")
             if check_word[-3] == "s":
-                print("yep here")
                 f = open(r"Housekeeping_Log.txt", "a")
                 f.write(response.rsplit(' ', 1)[0])
                 f.close()

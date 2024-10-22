@@ -311,6 +311,7 @@ def tc_02_04():
                 tc_complete(False)  # If camera is already off, send message to ground reciever
                 groundrecieversocket.send("Camera already off\n".encode("utf-8"))
 
+
 # =========================
 # Large data transfer Functions
 # =========================
@@ -342,7 +343,7 @@ def tc_13_01():
                 groundrecieversocket.send("Image data transfer started\n".encode("utf-8"))
                 transfer_time = payloadsocket.recv(1024) # Get transfer time from payload
                 transfer_time = transfer_time.decode("utf-8") # Convert bytes to string
-                time.sleep(float(transfer_time))
+                time.sleep(math.ceil(float(transfer_time)))
                 #for i in range(math.ceil(float(transfer_time))):
                 #    image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
                 #    image_progress = image_progress.decode("utf-8") # Convert bytes to string

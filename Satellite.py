@@ -149,6 +149,47 @@ def tc_complete(var: bool):
         groundrecieversocket.send("Telecommand not completed: failure\n".encode("utf-8"))
 
 # =========================
+# Attitude Control System Settings
+# =========================
+attitude_update_interval = 50  # Time between attitude data updates in seconds
+
+def update_attitude_status():
+    """
+    Simulate attitude control system data.
+    """
+    # Generating realistic attitude data in degrees for different axes
+    attitude_data = {
+        "Roll": round(random.uniform(-180, 180), 2),
+        "Pitch": round(random.uniform(-90, 90), 2),
+        "Yaw": round(random.uniform(-180, 180), 2)
+    }
+    return attitude_data
+
+def send_attitude_status(client_socket):
+    """
+    Send attitude status at precise intervals.
+    """
+    while True:
+        attitude_data = update_attitude_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
+        attitude_info = (
+            f"TM.03.03 Attitude Status:\n"
+            f"\t  Roll: {attitude_data['Roll']} degrees\n"
+            f"\t  Pitch: {attitude_data['Pitch']} degrees\n"
+            f"\t  Yaw: {attitude_data['Yaw']} degrees\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
+        )
+        client_socket.send(attitude_info.encode("utf-8"))
+        time.sleep(attitude_update_interval)
+
+
+# =========================
 # Battery Simulation Settings
 # =========================
 battery_percent = random.randint(40, 80)  # Initial battery percentage
@@ -190,14 +231,11 @@ def generate_thermal_data():
     Simulate thermal data for different parts of the spacecraft.
     """
     # Generating realistic temperature ranges in Celsius for different components
-    # External surface in sunlight: 100C to 120C
-    # External surface in shadow: -170C to -120C
     # Internal components: 20C to 40C
     thermal_data = {
-        "external_sunlit_surface": round(random.uniform(100, 120), 2),
-        "external_shadow_surface": round(random.uniform(-170, -120), 2),
-        "internal_component_1": round(random.uniform(20, 40), 2),
-        "internal_component_2": round(random.uniform(20, 40), 2)
+        "Camera": round(random.uniform(20, 40), 2),
+        "CPU": round(random.uniform(20, 40), 2),
+        "PDU": round(random.uniform(20, 40), 2)
     }
     return thermal_data
 
@@ -351,6 +389,7 @@ def tc_13_01():
                 #image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
                 #image_progress = image_progress.decode("utf-8") # Convert bytes to string
                 #groundrecieversocket.send(image_progress.encode("utf-8"))
+                reset_storage_status()
                 tc_complete(True)
                 groundrecieversocket.send('image_sent'.encode("utf-8"))
 
@@ -411,7 +450,8 @@ def tc_18_01():
         # Start sending housekeeping
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
-
+        threading.Thread(target=send_attitude_status, args=(groundrecieversocket,), daemon=True).start()
+        threading.Thread(target=send_storage_status, args=(groundrecieversocket,), daemon=True).start()
         
 def tc_18_02():
     global mode
@@ -598,15 +638,61 @@ def send_thermal_data(client_socket):
             OB_time = f"{generate_onboard_time()} seconds"
         thermal_info = (
             f"TM.03.02 Thermal Data:\n"
-            f"\t  External Sunlit Surface: {thermal_data['external_sunlit_surface']}C\n"
-            f"\t  External Shadow Surface: {thermal_data['external_shadow_surface']}C\n"
-            f"\t  Internal Component 1: {thermal_data['internal_component_1']}C\n"
-            f"\t  Internal Component 2: {thermal_data['internal_component_2']}C\n"
+            f"\t  Camera: {thermal_data['Camera']}C\n"
+            f"\t  CPU: {thermal_data['CPU']}C\n"
+            f"\t  PDU: {thermal_data['PDU']}C\n"
             f"\t  {tajm} {OB_time}\n"
             f"\t  {generate_onboard_time()}\n"
         )
         client_socket.send(thermal_info.encode("utf-8"))
         time.sleep(thermal_update_interval)
+
+# =========================
+# Data Storage Status Settings
+# =========================
+storage_update_interval = 50  # Time between storage data updates in seconds
+storage_capacity = 10000  # Total storage capacity in MB
+reserved_storage = 200  # Initial used storage in MB
+used_storage = reserved_storage  # Used storage in MB
+image_data_size = 25  # Size of image data in MB
+
+def update_storage_status():
+    """
+    Simulate data storage status.
+    """
+    global used_storage
+    # Increment used storage
+    used_storage = min(storage_capacity, used_storage + image_data_size)
+    return used_storage
+
+def reset_storage_status():
+    """
+    Reset data storage status after sending image data.
+    """
+    global used_storage
+    used_storage = max(0, reserved_storage)
+
+def send_storage_status(client_socket):
+    """
+    Send data storage status at precise intervals.
+    """
+    while True:
+        used_storage = update_storage_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
+        storage_info = (
+            f"TM.03.04 Data Storage Status:\n"
+            f"\t  Used Storage: {used_storage:.1f} MB\n"
+            f"\t  Total Capacity: {storage_capacity} MB\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
+        )
+        client_socket.send(storage_info.encode("utf-8"))
+        time.sleep(storage_update_interval)
 
 # =========================
 # Server Function

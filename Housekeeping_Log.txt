@@ -10,6 +10,17 @@ TM.03.01 Battery Status:
 	  Internal Component 1: 36.52C
 	  Internal Component 2: 29.73C
 	  On-Board Time: 0 seconds
+	  0
+TM.03.03 Attitude Status:
+	  Roll: -122.85 degrees
+	  Pitch: 65.97 degrees
+	  Yaw: 47.14 degrees
+	  On-Board Time: 0 seconds
+	  0
+TM.03.04 Data Storage Status:
+	  Used Storage: 225.0 MB
+	  Total Capacity: 100000 MB
+	  On-Board Time: 0 seconds
 	 TM.03.01 Battery Status:
 	  Percent: 54.2%
 	  Charging: True

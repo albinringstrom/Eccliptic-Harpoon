@@ -1,27 +1,61 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 TM.03.01 Battery Status:
-	  Percent: 53.7%
-	  Charging: True
+	  Percent: 63.2%
+	  Charging: False
 	  On-Board Time: 0 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 119.51C
-	  External Shadow Surface: -129.95C
-	  Internal Component 1: 36.52C
-	  Internal Component 2: 29.73C
+	  External Sunlit Surface: 119.45C
+	  External Shadow Surface: -129.18C
+	  Internal Component 1: 28.84C
+	  Internal Component 2: 22.97C
 	  On-Board Time: 0 seconds
+	 TM.03.02 Thermal Data:
+	  External Sunlit Surface: 117.22C
+	  External Shadow Surface: -147.35C
+	  Internal Component 1: 34.79C
+	  Internal Component 2: 32.88C
+	  On-Board Time: 50 seconds
 	 TM.03.01 Battery Status:
-	  Percent: 54.2%
-	  Charging: True
+	  Percent: 62.6%
+	  Charging: False
 	  On-Board Time: 50 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 117.59C
-	  External Shadow Surface: -167.05C
-	  Internal Component 1: 31.58C
-	  Internal Component 2: 37.27C
-	  On-Board Time: 50 seconds
+	  External Sunlit Surface: 116.86C
+	  External Shadow Surface: -137.3C
+	  Internal Component 1: 34.43C
+	  Internal Component 2: 38.04C
+	  On-Board Time: 100 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 62.4%
+	  Charging: False
+	  On-Board Time: 100 seconds
+	 TM.03.02 Thermal Data:
+	  External Sunlit Surface: 119.57C
+	  External Shadow Surface: -153.38C
+	  Internal Component 1: 28.65C
+	  Internal Component 2: 36.66C
+	  On-Board Time: 150 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 62.0%
+	  Charging: True
+	  On-Board Time: 150 seconds
+	 TM.03.02 Thermal Data:
+	  External Sunlit Surface: 112.58C
+	  External Shadow Surface: -161.91C
+	  Internal Component 1: 39.23C
+	  Internal Component 2: 37.75C
+	  On-Board Time: 200 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 62.9%
+	  Charging: True
+	  On-Board Time: 200 seconds
+	 TM.03.02 Thermal Data:
+	  External Sunlit Surface: 104.12C
+	  External Shadow Surface: -148.85C
+	  Internal Component 1: 32.81C
+	  Internal Component 2: 23.44C
+	  On-Board Time: 250 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 63.1%
+	  Charging: True
+	  On-Board Time: 250 seconds
 	 
-=======
->>>>>>> 5072c7dab63799bf547497c1c17655b4c3a755d2
-=======
->>>>>>> 5072c7dab63799bf547497c1c17655b4c3a755d2

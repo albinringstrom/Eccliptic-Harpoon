@@ -1,14 +1,9 @@
-from http import server
-import sched
 import socket
 import time
 import subprocess
 import random
 import threading
-from urllib import request
-import numpy as np
 import math
-from tkinter.messagebox import YESNO
 
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
@@ -18,7 +13,7 @@ time_switch = 0
 Seq_count = 0 # sequence counter
 
 # =========================
-# Schedule Array Function
+# Schedule Array Functions
 # =========================
 def schedule_array(request1):
     global schedule
@@ -28,14 +23,17 @@ def schedule_array(request1):
     
     schedule[0].append(tc)
     schedule[1].append(timetag)
-    print(schedule)
+
+def clearschedule():
+    global schedule
+    schedule.clear()
+    schedule = [[],[]]
 
 # =========================
 # Telecommand Time Tag Extraction Function
 # =========================
 def tc_timetag(request1):
     timetag = request1[9:]
-    print('timetag = ' + timetag)
     return timetag
 
 # =========================
@@ -43,7 +41,6 @@ def tc_timetag(request1):
 # =========================
 def tc_telecommand(request1):
     tc = request1[0:8]
-    print('tc = ' + tc)
     return tc
 
 # =========================
@@ -52,19 +49,21 @@ def tc_telecommand(request1):
 def obtime_eq_tag():
     global schedule
 
-    #take in onboard time
-    
-
     while True:
-        OBT = onboard_time()
-        onboardtimestring = OBT[1]
+   
+        #take in time
+        time = sec_to_timetag()
 
         for t in range(len(schedule[0])):
-            if onboardtimestring == schedule[1][t] or 'XX:XX:XX' == schedule[1][t]:
-                execute_tc(schedule[0][t])
-                
+            if time == schedule[1][t] or 'XX:XX:XX' == schedule[1][t]:
+
+                command = schedule[0][t]
                 schedule[1][t] = ''
                 schedule[0][t] = ''
+
+                execute_tc(command)
+
+                
 
                 
 def execute_tc(finalTC):
@@ -82,6 +81,18 @@ def execute_tc(finalTC):
         case "TC.02.04":
             tc_accept(True)
             tc_02_04()
+        case "TC.09.01":
+            tc_accept(True)
+            tc_09_01()
+        case "TC.09.02":
+            tc_accept(True)
+            tc_09_02()
+        case "TC.11.01":
+            tc_accept(True)
+            tc_11_01()
+        case "TC.11.02":
+            tc_accept(True)
+            tc_11_02()
         case "TC.13.01":
             tc_accept(True)
             tc_13_01()
@@ -122,8 +133,6 @@ def execute_tc(finalTC):
 # =========================
 # Telecommand Acception Functions
 # =========================
-
-
 def tc_accept(var: bool):
     if var:
         groundrecieversocket.send("Telecommand accepted: success\n".encode("utf-8"))
@@ -204,15 +213,6 @@ def generate_thermal_data():
 # =========================
 # Telecommand power on/off Functions
 # =========================
-
-
-def generate_onboard_time():
-    global t0
-
-    time_now = time.time()
-    time_now = math.floor(time_now)
-    t_now = time_now - t0
-    return t_now
 
 
 # Needs change because of modes later, "1" is placeholder
@@ -358,14 +358,9 @@ def tc_13_01():
 # Telecommand mode Functions
 # =========================
 
-
-# =========================
-# On-Board Time Functions
-# =========================
-
-
-def tc_09_01(mode):
-
+#Switch to local time command
+def tc_09_01():
+    global mode
     global time_switch
 
     if time_switch == 0:
@@ -374,16 +369,25 @@ def tc_09_01(mode):
         time_switch = 0
 
 
-
-def tc_09_02(mode):
-
+#display onboard time command
+def tc_09_02():
+    global mode
     global t0
 
     t_now = generate_onboard_time()
     tstring = f"On-board time: {t_now} seconds"
     groundrecieversocket.send(str(tstring).encode("utf-8"))
 
+#reset command schedule command
+def tc_11_01():
+    clearschedule()
+   
+#display command schedule command
+def tc_11_02():
+    global schedule
+    print(schedule)
 
+#turn on spacecraft command
 def tc_18_01():
     global t0
 
@@ -398,7 +402,7 @@ def tc_18_01():
         groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
-        time.sleep(random.randint(1,20))
+        time.sleep(random.randint(1,10))
         groundrecieversocket.send("Spacecraft on, entering safe mode\n".encode("utf-8"))
         mode = 1
 
@@ -412,7 +416,7 @@ def tc_18_01():
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
 
-        
+#enter SAFE-Mode command
 def tc_18_02():
     global mode
     tc_execution(True)
@@ -431,6 +435,7 @@ def tc_18_02():
         tc_complete(True)
         mode = 1
 
+#enter MOON-Pointing mode
 def tc_18_03():
     global mode
     tc_execution(True)
@@ -448,6 +453,7 @@ def tc_18_03():
         tc_complete(True)
         mode = 2
 
+#enter SUN-Poitning mode
 def tc_18_04():
     global mode
     tc_execution(True)
@@ -465,6 +471,7 @@ def tc_18_04():
         tc_complete(True)
         mode = 3
 
+#enter MANOEUVRE mode
 def tc_18_05():
     global mode
     tc_execution(True)
@@ -482,6 +489,7 @@ def tc_18_05():
         tc_complete(True)
         mode = 4
 
+#enter DATA-Sending mode
 def tc_18_06():
     global mode
     tc_execution(True)
@@ -501,34 +509,55 @@ def tc_18_06():
 
 
 # =========================
-# Onboard time function
+# Time functions
 # =========================
+def generate_local_time():
+    time_local = [time.localtime()[3], time.localtime()[4], time.localtime()[5]]
+    return time_local
 
-def onboard_time():
-    onboardtime = [time.localtime()[3]-starttime[0],time.localtime()[4]-starttime[1],time.localtime()[5]-starttime[2]]
-    for i in [1,2]:
-        if onboardtime[i] < 0:
-            onboardtime[i] += 60
-            onboardtime[i-1] -= 1
+def generate_onboard_time():
+    global t0
 
-    #take each element of integer array and conv to str
-    onboardhour = str(onboardtime[0])
-    onboardminute = str(onboardtime[1])
-    onboardsecond = str(onboardtime[2])
+    time_now = time.time()
+    time_now = math.floor(time_now)
+    t_now = time_now - t0
+    return t_now
 
-    #add a 0 beforevalue if length == 1
-    if len(onboardhour) == 1:
-        onboardhour = '0' + onboardhour
-    if len(onboardminute) == 1:
-        onboardminute = '0' + onboardminute
-    if len(onboardsecond) == 1:
-        onboardsecond = '0' + onboardsecond
+def sec_to_timetag():
 
-    #convert to correct format XX:XX:XX
-    onboardtimestring = onboardhour + ':' + onboardminute + ':' +  onboardsecond 
-    #return array with onboardtime int array and string
-    OBT = [onboardtime, onboardtimestring]
-    return OBT
+    global time_switch
+
+    if time_switch == 0:
+        #use onboardtime
+        sec = generate_onboard_time() 
+        #separate the h, m and s 
+        hours = math.floor(sec/3600)
+        minutes = math.floor((sec - hours*3600)/60)
+        sec = sec - hours*3600 - minutes*60
+    
+        #convert the integers to strings
+        sec = str(sec)
+        minutes = str(minutes)
+        hours = str(hours)
+
+    elif time_switch == 1:
+        #use localtime
+        localtime = generate_local_time()
+        #separate the h,m and s
+        hours = str(localtime[0])
+        minutes = str(localtime[1])
+        sec = str(localtime[2])
+    #format time
+    if len(sec) == 1:
+        sec = '0' + sec
+    if len(minutes) == 1:
+        minutes = '0' + minutes
+    if len(hours) == 1:
+        hours = '0' + hours
+
+    time = hours + ':' + minutes + ':' +  sec
+    return time
+
 
 
 def tc_69_69(mode):
@@ -641,12 +670,11 @@ def run_server():
             groundrecieversocket.send("closed".encode("utf-8"))
             break
 
-        if request1 != "discard".upper():
+        if request1[0:7] != "discard".upper():
             print(f"Received: {request1} at {time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}\n")
             groundrecieversocket.send(request1.encode("utf-8"))
-        
-        if request1 == "discard".upper():
-            discard = 0
+        if request1[0:7] == "discard".upper():
+            groundrecieversocket.send('DISCARDED'.encode("utf-8"))
         elif mode == 0 and request1 != "TC.18.01TXX:XX:XX":
             tc_accept(False)
             groundrecieversocket.send("Satellite not on\n".encode("utf-8"))
@@ -658,7 +686,7 @@ def run_server():
             #run schedule function to insert tc and timetag in array
             schedule_array(request1)
             if f"{request1[3]}{request1[4]}" == "18" or f"{request1[3]}{request1[4]}" == '13':
-                time.sleep(1)
+                time.sleep(2)
                 
 
         
@@ -675,10 +703,6 @@ def run_server():
     groundsender.close()
     payloadserver.close()
     groundreciever.close()
-
-# Temporary varible stuff before we finish other stuff
-
-starttime = [time.localtime()[3],time.localtime()[4],time.localtime()[5]]
 
 # =========================
 # Server Setup

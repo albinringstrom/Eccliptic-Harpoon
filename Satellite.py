@@ -118,6 +118,114 @@ def obtime_eq_tag():
                 execute_tc(command)
 
 # ==================================================================================================
+# EVENT REPORTING FUNCTION
+# ==================================================================================================
+left_panel_reported = '0' # Information an anomaly with the left solar panel has already been reported 
+right_panel_reported = '0' # Information an anomaly with the left solar panel has already been reported 
+Battery_state = 1   
+anomaly_check_interval = 10 # How many seconds between anomaly checks
+def anomaly_reporting(client_socket):
+    
+    event_simulation()
+    # Detects anomalies and reports what has happened
+
+    
+    while True:
+        anomaly = "TM.05.01 Event reporting\n"
+        anomaly_detected = False
+        # Checks if the maximum battery capacity is below a certain tresh hold and reports it
+        if battery_max_capacity<50 and battery_state == 1:
+            
+            anomaly_detected = '1'
+            battery_state=2
+            
+            anomaly = anomaly + (
+                f"Max battery capacity is below 50% of the original value and is currently at {battery_max_capacity}\n%."
+                )
+        elif battery_max_capacity<25 and battery_state == 2:
+
+                anomaly_detected = '1'
+                battery_state=3
+
+                anomaly = anomaly + (
+                    f"Max battery capacity is below 25% of the original value and is currently at {battery_max_capacity}\n%."
+                )
+            
+    
+        #  Checks if the solar panels are working
+        if left_solar_panel_status == '0' and left_panel_reported == '0':
+            anomaly_detected = '1'
+
+            left_panel_reported = '1' # Sets left_panel_reported to '1' because the anomaly has been reported with the left solar panel
+
+            anomaly = anomaly + (
+                "The left solar panel is malfunctioning\n"
+            )
+        elif left_panel_reported == '1' and left_solar_panel_status == '1':
+                anomaly_detected = '1'
+
+                left_panel_reported = '0' # Sets left_panel_problem_reported to '0' because the left solar panel has been reported to function again
+                
+                anomaly = anomaly + (
+                "The left solar panel is functioning again\n"
+            )
+
+        if right_solar_panel_status == False and right_panel_reported == False:
+            anomaly_detected = '1'
+
+            right_panel_reported = '1' # Sets right_panel_reported to '1' because the anomaly has been reported with the right solar panel
+            anomaly = anomaly + (
+                "The right solar panel is malfunctioning\n"
+            )
+
+        elif right_sps_reported == '1' and right_solar_panel_status == '1':
+                anomaly_detected = '1'
+                
+                right_sps_reported = '0' # Sets right_panel_reported to '0' because the right solar panel has been reported to function again
+
+                anomaly = anomaly + (
+                "The right solar panel is functioning again\n"
+            )
+                
+        # Checks if any anomalys have been detected
+        if anomaly_detected == '1':
+            if time_switch == 1:
+                tajm = f"Local time:"
+                OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+            else:
+                tajm = f"On-Board Time:"
+                OB_time = f"{generate_onboard_time()} seconds"
+            anomaly = anomaly + (
+                f"\t  {tajm} {OB_time}\n"
+                f"\t  {generate_onboard_time()}\n"
+            )
+            client_socket.send(anomaly.encode("utf-8"))
+        
+        time.sleep(anomaly_check_interval) # How often the satellite will check for anomalys
+
+# ==================================================================================================
+# EVENT SIMULATION SETTING
+# ==================================================================================================
+battery_max_capacity = 100 # Maximum capacity of the battery
+right_solar_panel_status = '1'
+left_solar_panel_status = '1'
+def event_simulation():
+
+    if random.random()>0.994: # the close the number is to 1 the less chance there will be for the solar panel to fail
+        right_solar_panel_status = '0'
+    else:
+        right_solar_panel_status = '1'
+    
+    if random.random()>0.994:
+        left_solar_panel_status = '0'
+    else:
+        left_solar_panel_status = '1'
+    
+    # Random chance for the battery to degrade
+    if random.random()>0.95:
+        battery_max_capacity = battery_max_capacity-random.uniform(1,5)
+    
+# ==================================================================================================
 # BATTERY AND THERMAL DATA FUNCTIONS
 # ==================================================================================================
 

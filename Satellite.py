@@ -13,16 +13,17 @@ import numpy as np
 # =========================
 # Schedule Array Function
 # =========================
-def schedule_array(request1,i):
+def schedule_array(request1):
+    global schedule
     timetag = tc_timetag(request1)
     tc = tc_telecommand(request1)
+    i = len(schedule)
+    print(schedule)
+    print(i)
     
-    schedule_array = [['commands'], ['timetags']]
-    schedule_array[0][i] = tc
-    schedule_array[1][i] = timetag
-
-    i += 1
-    return schedule_array
+    schedule[0].append(tc)
+    schedule[1].append(timetag)
+    print(schedule)
 
 # =========================
 # Telecommand Time Tag Extraction Function
@@ -47,60 +48,67 @@ def obtime_eq_tag():
     global schedule
 
     #take in onboard time
-    OBT = onboard_time()
-    onboardtimestring = OBT[1]
+    
 
     while True:
-        for t in schedule[1]:
-            if onboardtimestring == schedule[1][i]:
-                execute_tc(schedule[0][i])
+        OBT = onboard_time()
+        onboardtimestring = OBT[1]
+
+        for t in range(len(schedule[0])):
+            if onboardtimestring == schedule[1][t] or 'XX:XX:XX' == schedule[1][t]:
+                execute_tc(schedule[0][t])
+                print(onboardtimestring)
+                schedule[1][t] = ''
+                schedule[0][t] = ''
+
+                print(schedule)
+                
                 
                 
             
         
-def execute_tc():
+def execute_tc(finalTC):
+    global mode
     match finalTC:
-    case "TC.02.01":
-        tc_accept(True)
-        tc_02_01(mode)
-    case "TC.02.02":
-        tc_accept(True)
-        tc_02_02(mode)
-    case "TC.02.03":
-        tc_accept(True)
-        tc_02_03(mode)
-    case "TC.02.04":
-        tc_accept(True)
-        tc_02_04(mode)
-    case "TC.18.01":
-        tc_accept(True)
-        tc_18_01(mode)
-        mode = 1
-    case "TC.18.02":
-        tc_accept(True)
-        tc_18_02(mode)
-        mode = 1
-        print(mode)
-    case "TC.18.03TXX:XX:XX":
-        tc_accept(True)
-        tc_18_03(mode)
-        mode = 2
-        print(mode)
-    case "TC.18.04TXX:XX:XX":
-        tc_accept(True)
-        tc_18_04(mode)
-        mode = 3
-    case "TC.18.05TXX:XX:XX":
-        tc_accept(True)
-        tc_18_05(mode)
-        mode = 4
-    case "TC.18.06TXX:XX:XX":
-        tc_accept(True)
-        tc_18_06(mode)
-        mode = 5
-    case _:
-        tc_accept(False)
-        payloadsocket.send("Wrong command".encode("utf-8"))
+        case "TC.02.01":
+            tc_accept(True)
+            tc_02_01()
+        case "TC.02.02":
+            tc_accept(True)
+            tc_02_02()
+        case "TC.02.03":
+            tc_accept(True)
+            tc_02_03()
+        case "TC.02.04":
+            tc_accept(True)
+            tc_02_04()
+        case "TC.18.01":
+            tc_accept(True)
+            tc_18_01()
+            mode = 1
+        case "TC.18.02":
+            tc_accept(True)
+            tc_18_02()
+            mode = 1
+        case "TC.18.03":
+            tc_accept(True)
+            tc_18_03()
+            mode = 2
+        case "TC.18.04":
+            tc_accept(True)
+            tc_18_04()
+            mode = 3
+        case "TC.18.05":
+            tc_accept(True)
+            tc_18_05()
+            mode = 4
+        case "TC.18.06":
+            tc_accept(True)
+            tc_18_06()
+            mode = 5
+        case _:
+            tc_accept(False)
+            payloadsocket.send("Wrong command".encode("utf-8"))
 
 
     
@@ -191,7 +199,8 @@ def generate_thermal_data():
 # =========================
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_01(mode):
+def tc_02_01():
+    global mode
     if mode != 1:   # Check correct mode
         tc_execution(False)
         groundrecieversocket.send("Not in correct mode to execute TC.02.01\n".encode("utf-8"))
@@ -210,7 +219,8 @@ def tc_02_01(mode):
             groundrecieversocket.send("Payload power on\n".encode("utf-8"))
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_02(mode):
+def tc_02_02():
+    global mode
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.02\n".encode("utf-8"))
@@ -233,7 +243,8 @@ def tc_02_02(mode):
 # =========================
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_03(mode):
+def tc_02_03():
+    global mode
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.03\n".encode("utf-8"))
@@ -258,7 +269,8 @@ def tc_02_03(mode):
                 groundrecieversocket.send("Camera already on\n".encode("utf-8"))
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_04(mode):
+def tc_02_04():
+    global mode
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.04\n".encode("utf-8"))
@@ -286,7 +298,8 @@ def tc_02_04(mode):
 # Telecommand mode Functions
 # =========================
 
-def tc_18_01(mode):
+def tc_18_01():
+    global mode
     tc_execution(True)
     if mode != 0:
         tc_progress(False)
@@ -298,7 +311,8 @@ def tc_18_01(mode):
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
         
-def tc_18_02(mode):
+def tc_18_02():
+    global mode
     tc_execution(True)
     if mode == 1:
         print(mode)
@@ -309,7 +323,8 @@ def tc_18_02(mode):
         groundrecieversocket.send("Spacecraft in safe mode\n".encode("utf-8"))
         tc_complete(True)
 
-def tc_18_03(mode):
+def tc_18_03():
+    global mode
     tc_execution(True)
     if mode == 2:
         tc_progress(False)
@@ -319,7 +334,8 @@ def tc_18_03(mode):
         groundrecieversocket.send("Spacecraft in moon pointing mode\n".encode("utf-8"))
         tc_complete(True)
 
-def tc_18_04(mode):
+def tc_18_04():
+    global mode
     tc_execution(True)
     if mode == 3:
         tc_progress(False)
@@ -329,7 +345,8 @@ def tc_18_04(mode):
         groundrecieversocket.send("Spacecraft in sun pointing mode\n".encode("utf-8"))
         tc_complete(True)
 
-def tc_18_05(mode):
+def tc_18_05():
+    global mode
     tc_execution(True)
     if mode == 4:
         tc_progress(False)
@@ -339,7 +356,8 @@ def tc_18_05(mode):
         groundrecieversocket.send("Spacecraft in manoeuvre mode\n".encode("utf-8"))
         tc_complete(True)
 
-def tc_18_06(mode):
+def tc_18_06():
+    global mode
     tc_execution(True)
     if mode == 5:
         tc_progress(False)
@@ -421,12 +439,9 @@ def send_thermal_data(client_socket):
 
 def run_server():
 
+    global schedule, mode
     mode = 0
     #initial value for schedule_array
-    schedule = []
-    i = 0
-
-    
 
     while True:
 
@@ -454,9 +469,10 @@ def run_server():
             groundrecieversocket.send("Satellite not on\n".encode("utf-8"))
         else:
             #run schedule function to insert tc and timetag in array
-            schedule = schedule_array(request1, i)
+            schedule_array(request1)
             #Supposed to return the command to run
-            finalTC = obtime_eq_tag(schedule)
+            
+            
 
 
         groundsendersocket.send("\n".encode("utf-8"))
@@ -527,5 +543,8 @@ print(f"Accepted connection from {groundrecieveraddress[0]}:{groundrecieveraddre
 
 def bootup():
     threading.Thread(target=run_server).start()
+    threading.Thread(target=obtime_eq_tag).start()
 
+schedule = [[],[]]
 bootup()
+

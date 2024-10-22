@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 TM.03.01 Battery Status:
 	  Percent: 53.7%
 	  Charging: True
@@ -20,5 +21,7 @@ TM.03.01 Battery Status:
 	  Internal Component 2: 37.27C
 	  On-Board Time: 50 seconds
 	 
+=======
+>>>>>>> 5072c7dab63799bf547497c1c17655b4c3a755d2
 =======
 >>>>>>> 5072c7dab63799bf547497c1c17655b4c3a755d2

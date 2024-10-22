@@ -7,8 +7,15 @@ import random
 import threading
 from urllib import request
 import numpy as np
+import math
+from tkinter.messagebox import YESNO
+
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
+
+t0 = time.time()
+time_switch = 0
+Seq_count = 0 # sequence counter
 
 # =========================
 # Schedule Array Function
@@ -106,6 +113,9 @@ def execute_tc(finalTC):
             tc_accept(True)
             tc_18_06()
             mode = 5
+        case "TC.69.69":
+            tc_accept(True)
+            tc_69_69()
         case _:
             tc_accept(False)
             payloadsocket.send("Wrong command".encode("utf-8"))
@@ -116,6 +126,7 @@ def execute_tc(finalTC):
 # =========================
 # Telecommand Acception Functions
 # =========================
+
 
 def tc_accept(var: bool):
     if var:
@@ -197,6 +208,16 @@ def generate_thermal_data():
 # =========================
 # Telecommand power on/off Functions
 # =========================
+
+
+def generate_onboard_time():
+    global t0
+
+    time_now = time.time()
+    time_now = math.floor(time_now)
+    t_now = time_now - t0
+    return t_now
+
 
 # Needs change because of modes later, "1" is placeholder
 def tc_02_01():
@@ -295,77 +316,189 @@ def tc_02_04():
                 groundrecieversocket.send("Camera already off\n".encode("utf-8"))
 
 # =========================
+# Large data transfer Functions
+# =========================
+
+# Need change because of modes later, "1" is placeholder
+def tc_13_01(mode):
+    if mode != 1:
+        tc_execution(False)
+        groundrecieversocket.send("Not in correct mode to execute TC.13.01\n".encode("utf-8"))
+        return
+    else:
+        tc_execution(True)
+        payloadsocket.send("TC.13.01".encode("utf-8"))
+        payloadpower = payloadsocket.recv(1024) # Get payloadpower response from payload
+        payloadpower = payloadpower.decode("utf-8") # Convert bytes to string
+        if payloadpower == "0":
+            tc_progress(False)
+            groundrecieversocket.send("Payload power is off, image data transfer unavailable\n".encode("utf-8"))
+        else:
+            tc_progress(True)
+            camerapower = payloadsocket.recv(1024)
+            camerapower = camerapower.decode("utf-8")
+            if camerapower == "0":
+                tc_progress(False)
+                groundrecieversocket.send("Camera is off, data transfer unavailable\n".encode("utf-8"))
+            else:
+                tc_progress(True)
+                groundrecieversocket.send("Image data transfer started\n".encode("utf-8"))
+                transfer_time = payloadsocket.recv(1024) # Get transfer time from payload
+                transfer_time = transfer_time.decode("utf-8") # Convert bytes to string
+                for i in range(math.ceil(float(transfer_time))):
+                    image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
+                    image_progress = image_progress.decode("utf-8") # Convert bytes to string
+                    groundrecieversocket.send(image_progress.encode("utf-8"))
+                image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
+                image_progress = image_progress.decode("utf-8") # Convert bytes to string
+                groundrecieversocket.send(image_progress.encode("utf-8"))
+                tc_complete(True)     
+
+# =========================
 # Telecommand mode Functions
 # =========================
 
+
+# =========================
+# On-Board Time Functions
+# =========================
+
+
+def tc_09_01(mode):
+
+    global time_switch
+
+    if time_switch == 0:
+        time_switch = 1
+    else:
+        time_switch = 0
+
+
+
+def tc_09_02(mode):
+
+    global t0
+
+    t_now = generate_onboard_time()
+    tstring = f"On-board time: {t_now} seconds"
+    groundrecieversocket.send(str(tstring).encode("utf-8"))
+
+
 def tc_18_01():
+    global t0
+
     global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.01")
+
     if mode != 0:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already on\n".encode("utf-8"))
+    elif yesno == 0:        
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft on, entering safe mode\n".encode("utf-8"))
+        mode = 1
+
+        # Initialize on board time
+        t0 = time.time()
+        t0 = math.floor(t0)
+
         tc_complete(True)
+
+        # Start sending housekeeping
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
+
         
 def tc_18_02():
     global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.02")
+
     if mode == 1:
         print(mode)
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in safe mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in safe mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 1
 
 def tc_18_03():
     global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.03")
+
     if mode == 2:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in moon pointing mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in moon pointing mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 2
 
 def tc_18_04():
     global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.04")
+
     if mode == 3:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in sun pointing mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in sun pointing mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 3
 
 def tc_18_05():
     global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.05")
+
     if mode == 4:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in manoeuvre mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in manoeuvre mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 4
 
 def tc_18_06():
     global mode
     tc_execution(True)
+    yesno = tm_05_03("TC.18.06")
+
     if mode == 5:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in data-sending mode\n".encode("utf-8"))
+    elif yesno == 0:
+        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
+        time.sleep(random.randint(1,20))
         groundrecieversocket.send("Spacecraft in data-sending mode\n".encode("utf-8"))
         tc_complete(True)
+        mode = 5
+
 
 # =========================
 # Onboard time function
@@ -398,6 +531,32 @@ def onboard_time():
     return OBT
 
 
+def tc_69_69(mode):
+    # Use Popen to stream the output line by line
+    process = subprocess.Popen(['curl', 'ascii.live/rick'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    
+    # Continuously read the output and print it as it arrives
+    try:
+        for line in process.stdout:
+            print(line, end='')  # Print each line as it is received
+    except KeyboardInterrupt:
+        print("\nProcess interrupted.")
+    finally:
+        process.stdout.close()  # Close the stream when done
+        process.wait() # Wait for the process to finish
+
+
+def tm_05_03(command):
+    groundrecieversocket.send(f"Are you sure you want to execute {command}\n Y/N: ".encode("utf-8"))
+    groundsendersocket.send(f"Are you sure you want to execute {command}\n Y/N: ".encode("utf-8"))
+    confirmation = groundsendersocket.recv(1024)
+    confirmation = confirmation.decode("utf-8")
+    if confirmation == "Y" or confirmation == "y":
+        return 1
+    else:
+        return 0
+
+
 
 # =========================
 # Battery and Thermal Data Functions
@@ -409,10 +568,18 @@ def send_battery_status(client_socket):
     """
     while True:
         update_battery_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
         battery_info = (
             f"TM.03.01 Battery Status:\n"
-            f"\tPercent: {battery_percent:.1f}%\n"
-            f"\tCharging: {is_charging}\n"
+            f"\t  Percent: {battery_percent:.1f}%\n"
+            f"\t  Charging: {is_charging}\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
         )
         client_socket.send(battery_info.encode("utf-8"))
         time.sleep(battery_update_interval)  # Slower updates
@@ -423,12 +590,20 @@ def send_thermal_data(client_socket):
     """
     while True:
         thermal_data = generate_thermal_data()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
         thermal_info = (
             f"TM.03.02 Thermal Data:\n"
             f"\t  External Sunlit Surface: {thermal_data['external_sunlit_surface']}C\n"
             f"\t  External Shadow Surface: {thermal_data['external_shadow_surface']}C\n"
             f"\t  Internal Component 1: {thermal_data['internal_component_1']}C\n"
             f"\t  Internal Component 2: {thermal_data['internal_component_2']}C\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
         )
         client_socket.send(thermal_info.encode("utf-8"))
         time.sleep(thermal_update_interval)
@@ -439,14 +614,21 @@ def send_thermal_data(client_socket):
 
 def run_server():
 
-    global schedule, mode
+
+    global Seq_count, mode, schedule
+
     mode = 0
-    #initial value for schedule_array
 
     while True:
 
         request1 = groundsendersocket.recv(1024)
         request1 = request1.decode("utf-8")  # convert bytes to string
+
+        # Sequence stuff
+        Seq_count += 1
+        Seq_count_ground = request1[17:]
+        request1 = request1[0:17]
+
 
         # if we receive "close" from the client, then we break
         # out of the loop and close the connection
@@ -467,14 +649,14 @@ def run_server():
         elif mode == 0 and request1 != "TC.18.01TXX:XX:XX":
             tc_accept(False)
             groundrecieversocket.send("Satellite not on\n".encode("utf-8"))
+        elif str(Seq_count) != str(Seq_count_ground):
+            tc_accept(False)
+            groundrecieversocket.send("Sequence counter not correct\n".encode("utf-8"))
         else:
+
             #run schedule function to insert tc and timetag in array
             schedule_array(request1)
-            #Supposed to return the command to run
-            
-            
-
-
+        
         groundsendersocket.send("\n".encode("utf-8"))
 
     # close connection socket with the client

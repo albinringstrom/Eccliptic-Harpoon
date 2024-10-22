@@ -3,6 +3,8 @@ import time
 import numpy as np
 import sys
 
+Seq_count = 0
+
 #array containing telecommands
 tc_matrix = np.array([['TC.02.01', 'Turn On Payload'],
     ['TC.02.02', 'Turn Off Payload'],
@@ -21,7 +23,8 @@ tc_matrix = np.array([['TC.02.01', 'Turn On Payload'],
     ['TC.18.03', 'Enter Moon-Pointing Mode'],
     ['TC.18.04', 'Enter Sun-Pointing Mode'],
     ['TC.18.05', 'Enter Manoeuvre Mode'],
-    ['TC.18.06', 'Enter Data-Sending Mode'],])
+    ['TC.18.06', 'Enter Data-Sending Mode'],
+    ['TC.69.69', 'Enter Super Mega Death Mode']])
 
 
 # create a socket object
@@ -34,8 +37,24 @@ client.connect((server_ip, server_port))
 
 #Function that sends TC to OBC
 def sendmessage(TC):
-    #input message and send it to the server
+    global Seq_count # Sequence counter
+    # input message and send it to the server
+    Seq_count += 1
+    TC = TC + f"{Seq_count}"
     client.send(TC.encode("utf-8")[:1024])
+
+    #check if confirmation is needed
+    if f"{TC[3]}{TC[4]}" == "18":
+        response = client.recv(1024)
+        response = response.decode("utf-8")
+        print(f"Received: {response}")
+        confirmation = input()
+        client.send(confirmation.encode("utf-8")[:1024])
+        return
+    else:
+        return
+
+
 
 #Function that checks if input TC exists
 def create_and_validateTC():

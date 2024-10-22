@@ -1,6 +1,10 @@
 import socket
 import time
 
+# Clear housekeeping data
+f = open(r"Housekeeping_Log.txt", "w")
+f.write('')
+f.close()
 # =========================
 # Open Image Function
 # =========================
@@ -66,10 +70,26 @@ def run_client():
         if response.lower() == "closed":
             break
 
-        print(f"Received: {response}")
-        #openImage()
+        # openImage()
 
-        
+
+        print(f"Received: {response.rsplit(' ', 1)[0]}")
+
+        # unreadable code that works
+        check_word = f"{response.rsplit(' ', 2)[0]}"
+        print(check_word[-3])
+        if response[0:5] == "TM.03":
+            if check_word[-3] == "s":
+                print("yep here")
+                f = open(r"Housekeeping_Log.txt", "a")
+                f.write(response.rsplit(' ', 1)[0])
+                f.close()
+            else:
+                f = open(r"Housekeeping_Log.txt", "a")
+                word = f"{response.rsplit(' ', 1)[0]} On-Board Time: {response.rsplit(' ', 1)[1]}\n"
+                f.write(word)
+                f.close()
+
 
     # close client socket (connection to the server)
     client.close()

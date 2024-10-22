@@ -1,17 +1,127 @@
 from http import server
+import sched
 import socket
 import time
 import subprocess
 import random
 import threading
+from urllib import request
+import numpy as np
 import math
 from tkinter.messagebox import YESNO
+
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
 
 t0 = time.time()
 time_switch = 0
 Seq_count = 0 # sequence counter
+
+# =========================
+# Schedule Array Function
+# =========================
+def schedule_array(request1):
+    global schedule
+    timetag = tc_timetag(request1)
+    tc = tc_telecommand(request1)
+    i = len(schedule)
+    print(schedule)
+    print(i)
+    
+    schedule[0].append(tc)
+    schedule[1].append(timetag)
+    print(schedule)
+
+# =========================
+# Telecommand Time Tag Extraction Function
+# =========================
+def tc_timetag(request1):
+    timetag = request1[9:]
+    print('timetag = ' + timetag)
+    return timetag
+
+# =========================
+# Telecommand TC Extraction Function
+# =========================
+def tc_telecommand(request1):
+    tc = request1[0:8]
+    print('tc = ' + tc)
+    return tc
+
+# =========================
+# Comparison of timetag and onboardtime Function
+# =========================
+def obtime_eq_tag():
+    global schedule
+
+    #take in onboard time
+    
+
+    while True:
+        OBT = onboard_time()
+        onboardtimestring = OBT[1]
+
+        for t in range(len(schedule[0])):
+            if onboardtimestring == schedule[1][t] or 'XX:XX:XX' == schedule[1][t]:
+                execute_tc(schedule[0][t])
+                print(onboardtimestring)
+                schedule[1][t] = ''
+                schedule[0][t] = ''
+
+                print(schedule)
+                
+                
+                
+            
+        
+def execute_tc(finalTC):
+    global mode
+    match finalTC:
+        case "TC.02.01":
+            tc_accept(True)
+            tc_02_01()
+        case "TC.02.02":
+            tc_accept(True)
+            tc_02_02()
+        case "TC.02.03":
+            tc_accept(True)
+            tc_02_03()
+        case "TC.02.04":
+            tc_accept(True)
+            tc_02_04()
+        case "TC.18.01":
+            tc_accept(True)
+            tc_18_01()
+            mode = 1
+        case "TC.18.02":
+            tc_accept(True)
+            tc_18_02()
+            mode = 1
+        case "TC.18.03":
+            tc_accept(True)
+            tc_18_03()
+            mode = 2
+        case "TC.18.04":
+            tc_accept(True)
+            tc_18_04()
+            mode = 3
+        case "TC.18.05":
+            tc_accept(True)
+            tc_18_05()
+            mode = 4
+        case "TC.18.06":
+            tc_accept(True)
+            tc_18_06()
+            mode = 5
+        case "TC.69.69":
+            tc_accept(True)
+            tc_69_69()
+        case _:
+            tc_accept(False)
+            payloadsocket.send("Wrong command".encode("utf-8"))
+
+
+    
 
 # =========================
 # Telecommand Acception Functions
@@ -110,7 +220,8 @@ def generate_onboard_time():
 
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_01(mode):
+def tc_02_01():
+    global mode
     if mode != 1:   # Check correct mode
         tc_execution(False)
         groundrecieversocket.send("Not in correct mode to execute TC.02.01\n".encode("utf-8"))
@@ -129,7 +240,8 @@ def tc_02_01(mode):
             groundrecieversocket.send("Payload power on\n".encode("utf-8"))
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_02(mode):
+def tc_02_02():
+    global mode
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.02\n".encode("utf-8"))
@@ -152,7 +264,8 @@ def tc_02_02(mode):
 # =========================
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_03(mode):
+def tc_02_03():
+    global mode
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.03\n".encode("utf-8"))
@@ -177,7 +290,8 @@ def tc_02_03(mode):
                 groundrecieversocket.send("Camera already on\n".encode("utf-8"))
 
 # Needs change because of modes later, "1" is placeholder
-def tc_02_04(mode):
+def tc_02_04():
+    global mode
     if mode != 1:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.04\n".encode("utf-8"))
@@ -244,6 +358,7 @@ def tc_13_01(mode):
 # Telecommand mode Functions
 # =========================
 
+
 # =========================
 # On-Board Time Functions
 # =========================
@@ -271,6 +386,7 @@ def tc_09_02(mode):
 
 def tc_18_01():
     global t0
+
     global mode
     tc_execution(True)
     yesno = tm_05_03("TC.18.01")
@@ -384,6 +500,37 @@ def tc_18_06():
         mode = 5
 
 
+# =========================
+# Onboard time function
+# =========================
+
+def onboard_time():
+    onboardtime = [time.localtime()[3]-starttime[0],time.localtime()[4]-starttime[1],time.localtime()[5]-starttime[2]]
+    for i in [1,2]:
+        if onboardtime[i] < 0:
+            onboardtime[i] += 60
+            onboardtime[i-1] -= 1
+
+    #take each element of integer array and conv to str
+    onboardhour = str(onboardtime[0])
+    onboardminute = str(onboardtime[1])
+    onboardsecond = str(onboardtime[2])
+
+    #add a 0 beforevalue if length == 1
+    if len(onboardhour) == 1:
+        onboardhour = '0' + onboardhour
+    if len(onboardminute) == 1:
+        onboardminute = '0' + onboardminute
+    if len(onboardsecond) == 1:
+        onboardsecond = '0' + onboardsecond
+
+    #convert to correct format XX:XX:XX
+    onboardtimestring = onboardhour + ':' + onboardminute + ':' +  onboardsecond 
+    #return array with onboardtime int array and string
+    OBT = [onboardtime, onboardtimestring]
+    return OBT
+
+
 def tc_69_69(mode):
     # Use Popen to stream the output line by line
     process = subprocess.Popen(['curl', 'ascii.live/rick'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -408,6 +555,7 @@ def tm_05_03(command):
         return 1
     else:
         return 0
+
 
 
 # =========================
@@ -466,7 +614,8 @@ def send_thermal_data(client_socket):
 
 def run_server():
 
-    global Seq_count, mode
+
+    global Seq_count, mode, schedule
 
     mode = 0
 
@@ -504,53 +653,10 @@ def run_server():
             tc_accept(False)
             groundrecieversocket.send("Sequence counter not correct\n".encode("utf-8"))
         else:
-            match request1:
-                case "TC.02.01TXX:XX:XX":
-                    tc_accept(True)
-                    tc_02_01(mode)
-                case "TC.02.02TXX:XX:XX":
-                    tc_accept(True)
-                    tc_02_02(mode)
-                case "TC.02.03TXX:XX:XX":
-                    tc_accept(True)
-                    tc_02_03(mode)
-                case "TC.02.04TXX:XX:XX":
-                    tc_accept(True)
-                    tc_02_04(mode)
-                case "TC.09.01TXX:XX:XX":
-                    tc_accept(True)
-                    tc_09_01(mode)
-                case "TC.09.02TXX:XX:XX":
-                    tc_accept(True)
-                    tc_09_02(mode)
-                case "TC.13.01TXX:XX:XX":
-                    tc_accept(True)
-                    tc_13_01(mode)
-                case "TC.18.01TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_01()
-                case "TC.18.02TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_02()
-                case "TC.18.03TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_03()
-                case "TC.18.04TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_04()
-                case "TC.18.05TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_05()
-                case "TC.18.06TXX:XX:XX":
-                    tc_accept(True)
-                    tc_18_06()
-                case "TC.69.69TXX:XX:XX":
-                    tc_accept(True)
-                    tc_69_69(mode)
-                case _:
-                    tc_accept(False)
-                    payloadsocket.send("Wrong command".encode("utf-8"))
 
+            #run schedule function to insert tc and timetag in array
+            schedule_array(request1)
+        
         groundsendersocket.send("\n".encode("utf-8"))
 
     # close connection socket with the client
@@ -599,14 +705,14 @@ print(f"Listening on {server_ip}:{groundrecieveport}")
 # Otherwise just comment out the code, and open the files manually
   
 # Paths to the files you want to open
-file1 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Transmitter.py"
-file2 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Payload.py"
-file3 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Reciever.py"
+#file1 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Transmitter.py"
+#file2 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Payload.py"
+#file3 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Reciever.py"
 
 # Command to open files in new cmd windows
-subprocess.Popen(['start', 'cmd', '/k', 'python', file1], shell=True)
-subprocess.Popen(['start', 'cmd', '/k', 'python', file2], shell=True)
-subprocess.Popen(['start', 'cmd', '/k', 'python', file3], shell=True)
+#subprocess.Popen(['start', 'cmd', '/k', 'python', file1], shell=True)
+#subprocess.Popen(['start', 'cmd', '/k', 'python', file2], shell=True)
+#subprocess.Popen(['start', 'cmd', '/k', 'python', file3], shell=True)
 
 
 # accept incoming connections
@@ -617,4 +723,10 @@ print(f"Accepted connection from {payloadaddress[0]}:{payloadaddress[1]}")
 groundrecieversocket, groundrecieveraddress = groundreciever.accept()
 print(f"Accepted connection from {groundrecieveraddress[0]}:{groundrecieveraddress[1]}")
 
-run_server()
+def bootup():
+    threading.Thread(target=run_server).start()
+    threading.Thread(target=obtime_eq_tag).start()
+
+schedule = [[],[]]
+bootup()
+

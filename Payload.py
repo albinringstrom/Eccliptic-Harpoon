@@ -18,12 +18,13 @@ def image_send():
     transferred = 0
     transfer_rate = random.randint(5, 10) # Random transfer rate between 5 and 10 MB/s
     file_size = random.randint(30, 50)     # Random file size between 30 and 50 MB
+    client.send(str('').encode("utf-8"))
     client.send(str(file_size/transfer_rate).encode("utf-8")) # Send the time it takes to transfer the image to the server
-    while transferred < file_size:
-        client.send(f"Transferred {transferred:.2f}/{file_size} MB ({(transferred/file_size)*100:.2f}%)".encode("utf-8"))
-        transferred = transferred + transfer_rate
-        time.sleep(1)
-    client.send(f"Transferred {file_size:.2f}/{file_size} MB ({(file_size/file_size)*100:.2f}%)".encode("utf-8"))
+    #while transferred < file_size:
+    #    client.send(f"Transferred {transferred:.2f}/{file_size} MB ({(transferred/file_size)*100:.2f}%)".encode("utf-8"))
+    #    transferred = transferred + transfer_rate
+    #    time.sleep(1)
+    #client.send(f"Transferred {file_size:.2f}/{file_size} MB ({(file_size/file_size)*100:.2f}%)".encode("utf-8"))
         
 
 def run_client():

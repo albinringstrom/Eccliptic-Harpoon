@@ -25,8 +25,6 @@ def schedule_array(request1):
     timetag = tc_timetag(request1)
     tc = tc_telecommand(request1)
     i = len(schedule)
-    print(schedule)
-    print(i)
     
     schedule[0].append(tc)
     schedule[1].append(timetag)
@@ -64,16 +62,11 @@ def obtime_eq_tag():
         for t in range(len(schedule[0])):
             if onboardtimestring == schedule[1][t] or 'XX:XX:XX' == schedule[1][t]:
                 execute_tc(schedule[0][t])
-                print(onboardtimestring)
+                
                 schedule[1][t] = ''
                 schedule[0][t] = ''
 
-                print(schedule)
                 
-                
-                
-            
-        
 def execute_tc(finalTC):
     global mode
     match finalTC:
@@ -89,6 +82,9 @@ def execute_tc(finalTC):
         case "TC.02.04":
             tc_accept(True)
             tc_02_04()
+        case "TC.13.01":
+            tc_accept(True)
+            tc_13_01()
         case "TC.18.01":
             tc_accept(True)
             tc_18_01()
@@ -320,7 +316,8 @@ def tc_02_04():
 # =========================
 
 # Need change because of modes later, "1" is placeholder
-def tc_13_01(mode):
+def tc_13_01():
+    global mode
     if mode != 1:
         tc_execution(False)
         groundrecieversocket.send("Not in correct mode to execute TC.13.01\n".encode("utf-8"))
@@ -345,14 +342,16 @@ def tc_13_01(mode):
                 groundrecieversocket.send("Image data transfer started\n".encode("utf-8"))
                 transfer_time = payloadsocket.recv(1024) # Get transfer time from payload
                 transfer_time = transfer_time.decode("utf-8") # Convert bytes to string
-                for i in range(math.ceil(float(transfer_time))):
-                    image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
-                    image_progress = image_progress.decode("utf-8") # Convert bytes to string
-                    groundrecieversocket.send(image_progress.encode("utf-8"))
-                image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
-                image_progress = image_progress.decode("utf-8") # Convert bytes to string
-                groundrecieversocket.send(image_progress.encode("utf-8"))
-                tc_complete(True)     
+                time.sleep(float(transfer_time))
+                #for i in range(math.ceil(float(transfer_time))):
+                #    image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
+                #    image_progress = image_progress.decode("utf-8") # Convert bytes to string
+                #    groundrecieversocket.send(image_progress.encode("utf-8"))
+                #image_progress = payloadsocket.recv(1024) # Get image transfer progress from payload
+                #image_progress = image_progress.decode("utf-8") # Convert bytes to string
+                #groundrecieversocket.send(image_progress.encode("utf-8"))
+                tc_complete(True)
+                groundrecieversocket.send('image_sent'.encode("utf-8"))
 
 # =========================
 # Telecommand mode Functions
@@ -628,6 +627,7 @@ def run_server():
         Seq_count += 1
         Seq_count_ground = request1[17:]
         request1 = request1[0:17]
+        
 
 
         # if we receive "close" from the client, then we break
@@ -656,6 +656,10 @@ def run_server():
 
             #run schedule function to insert tc and timetag in array
             schedule_array(request1)
+            if f"{request1[3]}{request1[4]}" == "18" or f"{request1[3]}{request1[4]}" == '13':
+                time.sleep(1)
+                
+
         
         groundsendersocket.send("\n".encode("utf-8"))
 

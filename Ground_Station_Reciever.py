@@ -23,6 +23,9 @@ def run_client():
         # if server sent us "closed" in the payload, we break out of the loop and close our socket
         if response.lower() == "closed":
             break
+        
+        if response[0:8] != "TM.05.01":
+            print(f"Received: {response}")
 
         print(f"Received: {response}")
 

@@ -1,61 +1,146 @@
 TM.03.01 Battery Status:
-	  Percent: 63.2%
+	  Percent: 42.5%
 	  Charging: False
 	  On-Board Time: 0 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 119.45C
-	  External Shadow Surface: -129.18C
-	  Internal Component 1: 28.84C
-	  Internal Component 2: 22.97C
+	  Camera: 28.6C
+	  CPU: 26.82C
+	  PDU: 30.69C
 	  On-Board Time: 0 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 117.22C
-	  External Shadow Surface: -147.35C
-	  Internal Component 1: 34.79C
-	  Internal Component 2: 32.88C
+	  Camera: 20.98C
+	  CPU: 29.73C
+	  PDU: 28.3C
 	  On-Board Time: 50 seconds
 	 TM.03.01 Battery Status:
-	  Percent: 62.6%
+	  Percent: 41.9%
 	  Charging: False
 	  On-Board Time: 50 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 116.86C
-	  External Shadow Surface: -137.3C
-	  Internal Component 1: 34.43C
-	  Internal Component 2: 38.04C
+	  Camera: 31.0C
+	  CPU: 26.55C
+	  PDU: 33.67C
 	  On-Board Time: 100 seconds
 	 TM.03.01 Battery Status:
-	  Percent: 62.4%
-	  Charging: False
+	  Percent: 41.0%
+	  Charging: True
 	  On-Board Time: 100 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 119.57C
-	  External Shadow Surface: -153.38C
-	  Internal Component 1: 28.65C
-	  Internal Component 2: 36.66C
+	  Camera: 22.36C
+	  CPU: 34.43C
+	  PDU: 29.83C
 	  On-Board Time: 150 seconds
 	 TM.03.01 Battery Status:
-	  Percent: 62.0%
+	  Percent: 41.8%
 	  Charging: True
 	  On-Board Time: 150 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 112.58C
-	  External Shadow Surface: -161.91C
-	  Internal Component 1: 39.23C
-	  Internal Component 2: 37.75C
+	  Camera: 35.33C
+	  CPU: 36.51C
+	  PDU: 35.05C
 	  On-Board Time: 200 seconds
 	 TM.03.01 Battery Status:
-	  Percent: 62.9%
+	  Percent: 42.3%
 	  Charging: True
 	  On-Board Time: 200 seconds
 	 TM.03.02 Thermal Data:
-	  External Sunlit Surface: 104.12C
-	  External Shadow Surface: -148.85C
-	  Internal Component 1: 32.81C
-	  Internal Component 2: 23.44C
+	  Camera: 35.16C
+	  CPU: 36.21C
+	  PDU: 21.55C
 	  On-Board Time: 250 seconds
 	 TM.03.01 Battery Status:
-	  Percent: 63.1%
+	  Percent: 42.8%
 	  Charging: True
 	  On-Board Time: 250 seconds
-	 
+	 TM.03.01 Battery Status:
+	  Percent: 43.1%
+	  Charging: True
+	  Local time: 16:20:31
+	  On-Board Time: 301
+
+TM.03.02 Thermal Data:
+	  Camera: 36.63C
+	  CPU: 37.81C
+	  PDU: 25.27C
+	  Local time: 16:20:31
+	  On-Board Time: 301
+
+TM.03.02 Thermal Data:
+	  Camera: 38.83C
+	  CPU: 26.54C
+	  PDU: 22.9C
+	  Local time: 16:21:21
+	  On-Board Time: 351
+
+TM.03.01 Battery Status:
+	  Percent: 43.1%
+	  Charging: True
+	  Local time: 16:21:21
+	  On-Board Time: 351
+
+TM.03.02 Thermal Data:
+	  Camera: 23.72C
+	  CPU: 33.23C
+	  PDU: 21.49C
+	  Local time: 16:22:11
+	  On-Board Time: 401
+
+TM.03.01 Battery Status:
+	  Percent: 43.9%
+	  Charging: True
+	  Local time: 16:22:11
+	  On-Board Time: 401
+
+TM.03.02 Thermal Data:
+	  Camera: 23.26C
+	  CPU: 24.85C
+	  PDU: 35.42C
+	  On-Board Time: 451 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 44.1%
+	  Charging: True
+	  On-Board Time: 451 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 35.32C
+	  CPU: 27.08C
+	  PDU: 20.28C
+	  On-Board Time: 501 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 44.3%
+	  Charging: True
+	  On-Board Time: 501 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 25.32C
+	  CPU: 26.63C
+	  PDU: 35.23C
+	  On-Board Time: 551 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 44.4%
+	  Charging: True
+	  On-Board Time: 551 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 33.55C
+	  CPU: 36.49C
+	  PDU: 34.19C
+	  Local time: 16:25:31
+	  On-Board Time: 601
+
+TM.03.01 Battery Status:
+	  Percent: 44.8%
+	  Charging: True
+	  Local time: 16:25:31
+	  On-Board Time: 601
+
+TM.03.02 Thermal Data:
+	  Camera: 34.72C
+	  CPU: 34.17C
+	  PDU: 37.62C
+	  Local time: 16:26:21
+	  On-Board Time: 651
+
+TM.03.01 Battery Status:
+	  Percent: 45.3%
+	  Charging: True
+	  Local time: 16:26:21
+	  On-Board Time: 651
+

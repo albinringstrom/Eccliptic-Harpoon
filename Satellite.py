@@ -8,13 +8,72 @@ import math
 
 # Check bottom-ish of the code for the code to open the files in new cmd windows if you want to use that
 
+#start time
 t0 = time.time()
+#localtime or onboard time bool
 time_switch = 0
-Seq_count = 0 # sequence counter
+#sequence counter
+Seq_count = 0
 
-# =========================
-# Schedule Array Functions
-# =========================
+# ==================================================================================================
+# TIME FUNCTIONS
+# ==================================================================================================
+
+#generate local time function
+def generate_local_time():
+    time_local = [time.localtime()[3], time.localtime()[4], time.localtime()[5]]
+    return time_local
+
+#generate onboard time function
+def generate_onboard_time():
+    global t0
+
+    time_now = time.time()
+    time_now = math.floor(time_now)
+    t_now = time_now - t0
+    return t_now
+
+#timetag format function
+def sec_to_timetag():
+
+    global time_switch
+
+    if time_switch == 0:
+        #use onboardtime
+        sec = generate_onboard_time() 
+        #separate the h, m and s 
+        hours = math.floor(sec/3600)
+        minutes = math.floor((sec - hours*3600)/60)
+        sec = sec - hours*3600 - minutes*60
+    
+        #convert the integers to strings
+        sec = str(sec)
+        minutes = str(minutes)
+        hours = str(hours)
+
+    elif time_switch == 1:
+        #use localtime
+        localtime = generate_local_time()
+        #separate the h,m and s
+        hours = str(localtime[0])
+        minutes = str(localtime[1])
+        sec = str(localtime[2])
+    #format time
+    if len(sec) == 1:
+        sec = '0' + sec
+    if len(minutes) == 1:
+        minutes = '0' + minutes
+    if len(hours) == 1:
+        hours = '0' + hours
+
+    time = hours + ':' + minutes + ':' +  sec
+    return time
+
+# ==================================================================================================
+# SCHEDULE FUNCTIONS
+# ==================================================================================================
+
+#schedule array function
 def schedule_array(request1):
     global schedule
     timetag = tc_timetag(request1)
@@ -24,28 +83,23 @@ def schedule_array(request1):
     schedule[0].append(tc)
     schedule[1].append(timetag)
 
+#clear schedule function
 def clearschedule():
     global schedule
     schedule.clear()
     schedule = [[],[]]
 
-# =========================
-# Telecommand Time Tag Extraction Function
-# =========================
+#telecommand timetag extraction function
 def tc_timetag(request1):
     timetag = request1[9:]
     return timetag
 
-# =========================
-# Telecommand TC Extraction Function
-# =========================
+#telecommand tc extraction function
 def tc_telecommand(request1):
     tc = request1[0:8]
     return tc
 
-# =========================
-# Comparison of timetag and onboardtime Function
-# =========================
+#comparison of timetag and onboardtime function
 def obtime_eq_tag():
     global schedule
 
@@ -63,9 +117,224 @@ def obtime_eq_tag():
 
                 execute_tc(command)
 
-                
+# ==================================================================================================
+# BATTERY AND THERMAL DATA FUNCTIONS
+# ==================================================================================================
 
-                
+def send_battery_status(client_socket):
+    """
+    Send battery status at precise intervals.
+    """
+    while True:
+        update_battery_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
+        battery_info = (
+            f"TM.03.01 Battery Status:\n"
+            f"\t  Percent: {battery_percent:.1f}%\n"
+            f"\t  Charging: {is_charging}\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
+        )
+        client_socket.send(battery_info.encode("utf-8"))
+        time.sleep(battery_update_interval)  # Slower updates
+
+def send_thermal_data(client_socket):
+    """
+    Send thermal data every 30 seconds.
+    """
+    while True:
+        thermal_data = generate_thermal_data()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
+        thermal_info = (
+            f"TM.03.02 Thermal Data:\n"
+            f"\t  Camera: {thermal_data['Camera']}C\n"
+            f"\t  CPU: {thermal_data['CPU']}C\n"
+            f"\t  PDU: {thermal_data['PDU']}C\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
+        )
+        client_socket.send(thermal_info.encode("utf-8"))
+        time.sleep(thermal_update_interval)
+
+# ==================================================================================================
+# BATTERY SIMULATION SETTINGS
+# ==================================================================================================
+battery_percent = random.randint(40, 80)  # Initial battery percentage
+is_charging = False  # Initial charging state
+charge_interval = random.randint(10, 30)  # Duration for charging
+battery_update_interval = 50  # Time between status updates every 10 seconds
+
+def update_battery_status():
+    """
+    Update battery status based on charging state.
+    """
+    global battery_percent, is_charging, charge_interval
+
+    change_rate = round(random.uniform(0.01, 1), 2)  # Random change rate for battery status
+
+    # Random chance to stop charging while charging
+    if is_charging and random.random() < 0.1:  # 10% chance to stop charging
+        is_charging = False
+
+    if is_charging:
+        battery_percent = min(100, battery_percent + change_rate)
+        charge_interval -= 1
+        if charge_interval <= 0:
+            is_charging = False  # Stop charging after the interval
+    else:
+        battery_percent = max(1, battery_percent - change_rate)
+        # Randomly decide to start charging again
+        if random.random() < 0.25:  # 25% chance to start charging
+            is_charging = True
+            charge_interval = random.randint(10, 30)
+
+# ==================================================================================================
+# THERMAL SIMULATION SETTINGS
+# ==================================================================================================
+
+thermal_update_interval = 50  # Time between thermal data updates in seconds
+
+def generate_thermal_data():
+    """
+    Simulate thermal data for different parts of the spacecraft.
+    """
+    # Generating realistic temperature ranges in Celsius for different components
+    # Internal components: 20C to 40C
+    thermal_data = {
+        "Camera": round(random.uniform(20, 40), 2),
+        "CPU": round(random.uniform(20, 40), 2),
+        "PDU": round(random.uniform(20, 40), 2)
+    }
+    return thermal_data
+
+# ==================================================================================================
+# DATA STORAGE STATUS SETTINGS
+# ==================================================================================================
+storage_update_interval = 50  # Time between storage data updates in seconds
+storage_capacity = 10000  # Total storage capacity in MB
+reserved_storage = 200  # Initial used storage in MB
+used_storage = reserved_storage  # Used storage in MB
+image_data_size = 25  # Size of image data in MB
+
+def update_storage_status():
+    """
+    Simulate data storage status.
+    """
+    global used_storage
+    # Increment used storage
+    used_storage = min(storage_capacity, used_storage + image_data_size)
+    return used_storage
+
+def reset_storage_status():
+    """
+    Reset data storage status after sending image data.
+    """
+    global used_storage
+    used_storage = max(0, reserved_storage)
+
+def send_storage_status(client_socket):
+    """
+    Send data storage status at precise intervals.
+    """
+    while True:
+        used_storage = update_storage_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
+        storage_info = (
+            f"TM.03.04 Data Storage Status:\n"
+            f"\t  Used Storage: {used_storage:.1f} MB\n"
+            f"\t  Total Capacity: {storage_capacity} MB\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
+        )
+        client_socket.send(storage_info.encode("utf-8"))
+        time.sleep(storage_update_interval)
+
+# ==================================================================================================
+# ATTITUDE CONTROL SYSTEM SETTINGS
+# ==================================================================================================
+attitude_update_interval = 50  # Time between attitude data updates in seconds
+
+def update_attitude_status():
+    """
+    Simulate attitude control system data.
+    """
+    # Generating realistic attitude data in degrees for different axes
+    attitude_data = {
+        "Roll": round(random.uniform(-180, 180), 2),
+        "Pitch": round(random.uniform(-90, 90), 2),
+        "Yaw": round(random.uniform(-180, 180), 2)
+    }
+    return attitude_data
+
+def send_attitude_status(client_socket):
+    """
+    Send attitude status at precise intervals.
+    """
+    while True:
+        attitude_data = update_attitude_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
+        attitude_info = (
+            f"TM.03.03 Attitude Status:\n"
+            f"\t  Roll: {attitude_data['Roll']} degrees\n"
+            f"\t  Pitch: {attitude_data['Pitch']} degrees\n"
+            f"\t  Yaw: {attitude_data['Yaw']} degrees\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
+        )
+        client_socket.send(attitude_info.encode("utf-8"))
+        time.sleep(attitude_update_interval)
+
+# ==================================================================================================
+# TELECOMMAND ACCEPT FUNCTIONS
+# ==================================================================================================
+def tc_accept(var: bool):
+    if var:
+        groundrecieversocket.send("Telecommand accepted: success\n".encode("utf-8"))
+    else:
+        groundrecieversocket.send("Telecommand not accepted: failure\n".encode("utf-8"))
+
+def tc_execution(var: bool):
+    if var:
+        groundrecieversocket.send("Telecommand execution started: success\n".encode("utf-8"))
+    else:
+        groundrecieversocket.send("Telecommand not executed: failure\n".encode("utf-8"))
+
+def tc_progress(var: bool):
+    if var:
+        groundrecieversocket.send("Telecommand in progress: success\n".encode("utf-8"))
+    else:
+        groundrecieversocket.send("Telecommand not in progress: failure\n".encode("utf-8"))
+
+def tc_complete(var: bool):
+    if var:
+        groundrecieversocket.send("Telecommand completed: success\n".encode("utf-8"))
+    else:
+        groundrecieversocket.send("Telecommand not completed: failure\n".encode("utf-8"))
+
+# ==================================================================================================
+# TELECOMMAND EXECUTION FUNCTION
+# ==================================================================================================
+
 def execute_tc(finalTC):
     global mode
     match finalTC:
@@ -127,136 +396,16 @@ def execute_tc(finalTC):
             tc_accept(False)
             payloadsocket.send("Wrong command".encode("utf-8"))
 
+#===================================================================================================
+#==========================================TELECOMMANDS=============================================
+# ==================================================================================================
+# TC 2: PAYLOAD MANAGEMENT
+# ==================================================================================================
 
-    
-
-# =========================
-# Telecommand Acception Functions
-# =========================
-def tc_accept(var: bool):
-    if var:
-        groundrecieversocket.send("Telecommand accepted: success\n".encode("utf-8"))
-    else:
-        groundrecieversocket.send("Telecommand not accepted: failure\n".encode("utf-8"))
-
-def tc_execution(var: bool):
-    if var:
-        groundrecieversocket.send("Telecommand execution started: success\n".encode("utf-8"))
-    else:
-        groundrecieversocket.send("Telecommand not executed: failure\n".encode("utf-8"))
-
-def tc_progress(var: bool):
-    if var:
-        groundrecieversocket.send("Telecommand in progress: success\n".encode("utf-8"))
-    else:
-        groundrecieversocket.send("Telecommand not in progress: failure\n".encode("utf-8"))
-
-def tc_complete(var: bool):
-    if var:
-        groundrecieversocket.send("Telecommand completed: success\n".encode("utf-8"))
-    else:
-        groundrecieversocket.send("Telecommand not completed: failure\n".encode("utf-8"))
-
-# =========================
-# Attitude Control System Settings
-# =========================
-attitude_update_interval = 50  # Time between attitude data updates in seconds
-
-def update_attitude_status():
-    """
-    Simulate attitude control system data.
-    """
-    # Generating realistic attitude data in degrees for different axes
-    attitude_data = {
-        "Roll": round(random.uniform(-180, 180), 2),
-        "Pitch": round(random.uniform(-90, 90), 2),
-        "Yaw": round(random.uniform(-180, 180), 2)
-    }
-    return attitude_data
-
-def send_attitude_status(client_socket):
-    """
-    Send attitude status at precise intervals.
-    """
-    while True:
-        attitude_data = update_attitude_status()
-        if time_switch == 1:
-            tajm = f"Local time:"
-            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
-        else:
-            tajm = f"On-Board Time:"
-            OB_time = f"{generate_onboard_time()} seconds"
-        attitude_info = (
-            f"TM.03.03 Attitude Status:\n"
-            f"\t  Roll: {attitude_data['Roll']} degrees\n"
-            f"\t  Pitch: {attitude_data['Pitch']} degrees\n"
-            f"\t  Yaw: {attitude_data['Yaw']} degrees\n"
-            f"\t  {tajm} {OB_time}\n"
-            f"\t  {generate_onboard_time()}\n"
-        )
-        client_socket.send(attitude_info.encode("utf-8"))
-        time.sleep(attitude_update_interval)
-
-
-# =========================
-# Battery Simulation Settings
-# =========================
-battery_percent = random.randint(40, 80)  # Initial battery percentage
-is_charging = False  # Initial charging state
-charge_interval = random.randint(10, 30)  # Duration for charging
-battery_update_interval = 50  # Time between status updates every 10 seconds
-
-def update_battery_status():
-    """
-    Update battery status based on charging state.
-    """
-    global battery_percent, is_charging, charge_interval
-
-    change_rate = round(random.uniform(0.01, 1), 2)  # Random change rate for battery status
-
-    # Random chance to stop charging while charging
-    if is_charging and random.random() < 0.1:  # 10% chance to stop charging
-        is_charging = False
-
-    if is_charging:
-        battery_percent = min(100, battery_percent + change_rate)
-        charge_interval -= 1
-        if charge_interval <= 0:
-            is_charging = False  # Stop charging after the interval
-    else:
-        battery_percent = max(1, battery_percent - change_rate)
-        # Randomly decide to start charging again
-        if random.random() < 0.25:  # 25% chance to start charging
-            is_charging = True
-            charge_interval = random.randint(10, 30)
-
-# =========================
-# Thermal Simulation Settings
-# =========================
-thermal_update_interval = 50  # Time between thermal data updates in seconds
-
-def generate_thermal_data():
-    """
-    Simulate thermal data for different parts of the spacecraft.
-    """
-    # Generating realistic temperature ranges in Celsius for different components
-    # Internal components: 20C to 40C
-    thermal_data = {
-        "Camera": round(random.uniform(20, 40), 2),
-        "CPU": round(random.uniform(20, 40), 2),
-        "PDU": round(random.uniform(20, 40), 2)
-    }
-    return thermal_data
-
-# =========================
-# Telecommand power on/off Functions
-# =========================
-
-
-# Needs change because of modes later, "1" is placeholder
+#turn on payload command
 def tc_02_01():
     global mode
-    if mode != 1:   # Check correct mode
+    if mode == 0:   # Check correct mode
         tc_execution(False)
         groundrecieversocket.send("Not in correct mode to execute TC.02.01\n".encode("utf-8"))
         return
@@ -273,10 +422,10 @@ def tc_02_01():
             tc_complete(True)
             groundrecieversocket.send("Payload power on\n".encode("utf-8"))
 
-# Needs change because of modes later, "1" is placeholder
+#turn off payload command
 def tc_02_02():
     global mode
-    if mode != 1:   #Check correct mode
+    if mode == 0:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.02\n".encode("utf-8"))
         return
@@ -293,14 +442,10 @@ def tc_02_02():
             tc_complete(False)
             groundrecieversocket.send("Payload power already off\n".encode("utf-8"))
 
-# =========================
-# Telecommand camera on/off Functions
-# =========================
-
-# Needs change because of modes later, "1" is placeholder
+#turn on camera command
 def tc_02_03():
     global mode
-    if mode != 1:   #Check correct mode
+    if mode == 0:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.03\n".encode("utf-8"))
         return
@@ -323,10 +468,10 @@ def tc_02_03():
                 tc_complete(False)  # If camera is already on, send message to ground reciever
                 groundrecieversocket.send("Camera already on\n".encode("utf-8"))
 
-# Needs change because of modes later, "1" is placeholder
+#turn off camera command
 def tc_02_04():
     global mode
-    if mode != 1:   #Check correct mode
+    if mode == 0:   #Check correct mode
         tc_execution(False)
         groundrecieversocket.send("\nNot in correct mode to execute TC.02.04\n".encode("utf-8"))
         return
@@ -349,15 +494,50 @@ def tc_02_04():
                 tc_complete(False)  # If camera is already off, send message to ground reciever
                 groundrecieversocket.send("Camera already off\n".encode("utf-8"))
 
+# ==================================================================================================
+# TC 9: TIME MANAGEMENT
+# ==================================================================================================
 
-# =========================
-# Large data transfer Functions
-# =========================
+#Switch to local time command
+def tc_09_01():
+    global mode
+    global time_switch
 
-# Need change because of modes later, "1" is placeholder
+    if time_switch == 0:
+        time_switch = 1
+    else:
+        time_switch = 0
+
+#display onboard time command
+def tc_09_02():
+    global mode
+    global t0
+
+    t_now = generate_onboard_time()
+    tstring = f"On-board time: {t_now} seconds"
+    groundrecieversocket.send(str(tstring).encode("utf-8"))
+
+# ==================================================================================================
+# TC 11: SCHEDULE MANAGEMENT
+# ==================================================================================================
+
+#reset command schedule command
+def tc_11_01():
+    clearschedule()
+   
+#display command schedule command
+def tc_11_02():
+    global schedule
+    print(schedule)
+
+# ==================================================================================================
+# TC 13: LARGE DATA TRANSFER
+# ==================================================================================================
+
+#send image data command
 def tc_13_01():
     global mode
-    if mode != 1:
+    if mode != 5:
         tc_execution(False)
         groundrecieversocket.send("Not in correct mode to execute TC.13.01\n".encode("utf-8"))
         return
@@ -393,38 +573,9 @@ def tc_13_01():
                 tc_complete(True)
                 groundrecieversocket.send('image_sent'.encode("utf-8"))
 
-# =========================
-# Telecommand mode Functions
-# =========================
-
-#Switch to local time command
-def tc_09_01():
-    global mode
-    global time_switch
-
-    if time_switch == 0:
-        time_switch = 1
-    else:
-        time_switch = 0
-
-
-#display onboard time command
-def tc_09_02():
-    global mode
-    global t0
-
-    t_now = generate_onboard_time()
-    tstring = f"On-board time: {t_now} seconds"
-    groundrecieversocket.send(str(tstring).encode("utf-8"))
-
-#reset command schedule command
-def tc_11_01():
-    clearschedule()
-   
-#display command schedule command
-def tc_11_02():
-    global schedule
-    print(schedule)
+# ==================================================================================================
+# TC 18: MODE MANAGEMENT
+# ==================================================================================================
 
 #turn on spacecraft command
 def tc_18_01():
@@ -474,7 +625,7 @@ def tc_18_02():
         tc_complete(True)
         mode = 1
 
-#enter MOON-Pointing mode
+#enter MOON-Pointing mode command
 def tc_18_03():
     global mode
     tc_execution(True)
@@ -492,7 +643,7 @@ def tc_18_03():
         tc_complete(True)
         mode = 2
 
-#enter SUN-Poitning mode
+#enter SUN-Pointing mode command
 def tc_18_04():
     global mode
     tc_execution(True)
@@ -510,7 +661,7 @@ def tc_18_04():
         tc_complete(True)
         mode = 3
 
-#enter MANOEUVRE mode
+#enter MANOEUVRE mode command
 def tc_18_05():
     global mode
     tc_execution(True)
@@ -528,7 +679,7 @@ def tc_18_05():
         tc_complete(True)
         mode = 4
 
-#enter DATA-Sending mode
+#enter DATA-Sending mode command
 def tc_18_06():
     global mode
     tc_execution(True)
@@ -546,59 +697,7 @@ def tc_18_06():
         tc_complete(True)
         mode = 5
 
-
-# =========================
-# Time functions
-# =========================
-def generate_local_time():
-    time_local = [time.localtime()[3], time.localtime()[4], time.localtime()[5]]
-    return time_local
-
-def generate_onboard_time():
-    global t0
-
-    time_now = time.time()
-    time_now = math.floor(time_now)
-    t_now = time_now - t0
-    return t_now
-
-def sec_to_timetag():
-
-    global time_switch
-
-    if time_switch == 0:
-        #use onboardtime
-        sec = generate_onboard_time() 
-        #separate the h, m and s 
-        hours = math.floor(sec/3600)
-        minutes = math.floor((sec - hours*3600)/60)
-        sec = sec - hours*3600 - minutes*60
-    
-        #convert the integers to strings
-        sec = str(sec)
-        minutes = str(minutes)
-        hours = str(hours)
-
-    elif time_switch == 1:
-        #use localtime
-        localtime = generate_local_time()
-        #separate the h,m and s
-        hours = str(localtime[0])
-        minutes = str(localtime[1])
-        sec = str(localtime[2])
-    #format time
-    if len(sec) == 1:
-        sec = '0' + sec
-    if len(minutes) == 1:
-        minutes = '0' + minutes
-    if len(hours) == 1:
-        hours = '0' + hours
-
-    time = hours + ':' + minutes + ':' +  sec
-    return time
-
-
-
+#enter secret mode command
 def tc_69_69(mode):
     # Use Popen to stream the output line by line
     process = subprocess.Popen(['curl', 'ascii.live/rick'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -624,107 +723,11 @@ def tm_05_03(command):
     else:
         return 0
 
+#===================================================================================================
 
-
-# =========================
-# Battery and Thermal Data Functions
-# =========================
-
-def send_battery_status(client_socket):
-    """
-    Send battery status at precise intervals.
-    """
-    while True:
-        update_battery_status()
-        if time_switch == 1:
-            tajm = f"Local time:"
-            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
-        else:
-            tajm = f"On-Board Time:"
-            OB_time = f"{generate_onboard_time()} seconds"
-        battery_info = (
-            f"TM.03.01 Battery Status:\n"
-            f"\t  Percent: {battery_percent:.1f}%\n"
-            f"\t  Charging: {is_charging}\n"
-            f"\t  {tajm} {OB_time}\n"
-            f"\t  {generate_onboard_time()}\n"
-        )
-        client_socket.send(battery_info.encode("utf-8"))
-        time.sleep(battery_update_interval)  # Slower updates
-
-def send_thermal_data(client_socket):
-    """
-    Send thermal data every 30 seconds.
-    """
-    while True:
-        thermal_data = generate_thermal_data()
-        if time_switch == 1:
-            tajm = f"Local time:"
-            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
-        else:
-            tajm = f"On-Board Time:"
-            OB_time = f"{generate_onboard_time()} seconds"
-        thermal_info = (
-            f"TM.03.02 Thermal Data:\n"
-            f"\t  Camera: {thermal_data['Camera']}C\n"
-            f"\t  CPU: {thermal_data['CPU']}C\n"
-            f"\t  PDU: {thermal_data['PDU']}C\n"
-            f"\t  {tajm} {OB_time}\n"
-            f"\t  {generate_onboard_time()}\n"
-        )
-        client_socket.send(thermal_info.encode("utf-8"))
-        time.sleep(thermal_update_interval)
-
-# =========================
-# Data Storage Status Settings
-# =========================
-storage_update_interval = 50  # Time between storage data updates in seconds
-storage_capacity = 10000  # Total storage capacity in MB
-reserved_storage = 200  # Initial used storage in MB
-used_storage = reserved_storage  # Used storage in MB
-image_data_size = 25  # Size of image data in MB
-
-def update_storage_status():
-    """
-    Simulate data storage status.
-    """
-    global used_storage
-    # Increment used storage
-    used_storage = min(storage_capacity, used_storage + image_data_size)
-    return used_storage
-
-def reset_storage_status():
-    """
-    Reset data storage status after sending image data.
-    """
-    global used_storage
-    used_storage = max(0, reserved_storage)
-
-def send_storage_status(client_socket):
-    """
-    Send data storage status at precise intervals.
-    """
-    while True:
-        used_storage = update_storage_status()
-        if time_switch == 1:
-            tajm = f"Local time:"
-            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
-        else:
-            tajm = f"On-Board Time:"
-            OB_time = f"{generate_onboard_time()} seconds"
-        storage_info = (
-            f"TM.03.04 Data Storage Status:\n"
-            f"\t  Used Storage: {used_storage:.1f} MB\n"
-            f"\t  Total Capacity: {storage_capacity} MB\n"
-            f"\t  {tajm} {OB_time}\n"
-            f"\t  {generate_onboard_time()}\n"
-        )
-        client_socket.send(storage_info.encode("utf-8"))
-        time.sleep(storage_update_interval)
-
-# =========================
-# Server Function
-# =========================
+# ==================================================================================================
+# SERVER FUNCTION
+# ==================================================================================================
 
 def run_server():
 
@@ -789,9 +792,9 @@ def run_server():
     payloadserver.close()
     groundreciever.close()
 
-# =========================
-# Server Setup
-# =========================
+# ==================================================================================================
+# SERVER SETUP
+# ==================================================================================================
 
 groundsender = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 payloadserver = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

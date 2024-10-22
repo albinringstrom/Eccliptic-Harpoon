@@ -15,7 +15,6 @@ def power_check(power: str):
 
 # Send an image to the server
 def image_send():
-    print("KOLLA")
     transferred = 0
     transfer_rate = random.randint(5, 10) # Random transfer rate between 5 and 10 MB/s
     file_size = random.randint(30, 50)     # Random file size between 30 and 50 MB

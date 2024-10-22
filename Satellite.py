@@ -43,6 +43,47 @@ def tc_complete(var: bool):
         groundrecieversocket.send("Telecommand not completed: failure\n".encode("utf-8"))
 
 # =========================
+# Attitude Control System Settings
+# =========================
+attitude_update_interval = 50  # Time between attitude data updates in seconds
+
+def update_attitude_status():
+    """
+    Simulate attitude control system data.
+    """
+    # Generating realistic attitude data in degrees for different axes
+    attitude_data = {
+        "Roll": round(random.uniform(-180, 180), 2),
+        "Pitch": round(random.uniform(-90, 90), 2),
+        "Yaw": round(random.uniform(-180, 180), 2)
+    }
+    return attitude_data
+
+def send_attitude_status(client_socket):
+    """
+    Send attitude status at precise intervals.
+    """
+    while True:
+        attitude_data = update_attitude_status()
+        if time_switch == 1:
+            tajm = f"Local time:"
+            OB_time = f"{time.localtime()[3]}:{time.localtime()[4]}:{time.localtime()[5]}"
+        else:
+            tajm = f"On-Board Time:"
+            OB_time = f"{generate_onboard_time()} seconds"
+        attitude_info = (
+            f"TM.03.03 Attitude Status:\n"
+            f"\t  Roll: {attitude_data['Roll']} degrees\n"
+            f"\t  Pitch: {attitude_data['Pitch']} degrees\n"
+            f"\t  Yaw: {attitude_data['Yaw']} degrees\n"
+            f"\t  {tajm} {OB_time}\n"
+            f"\t  {generate_onboard_time()}\n"
+        )
+        client_socket.send(attitude_info.encode("utf-8"))
+        time.sleep(attitude_update_interval)
+
+
+# =========================
 # Battery Simulation Settings
 # =========================
 battery_percent = random.randint(40, 80)  # Initial battery percentage
@@ -84,14 +125,11 @@ def generate_thermal_data():
     Simulate thermal data for different parts of the spacecraft.
     """
     # Generating realistic temperature ranges in Celsius for different components
-    # External surface in sunlight: 100C to 120C
-    # External surface in shadow: -170C to -120C
     # Internal components: 20C to 40C
     thermal_data = {
-        "external_sunlit_surface": round(random.uniform(100, 120), 2),
-        "external_shadow_surface": round(random.uniform(-170, -120), 2),
-        "internal_component_1": round(random.uniform(20, 40), 2),
-        "internal_component_2": round(random.uniform(20, 40), 2)
+        "Camera": round(random.uniform(20, 40), 2),
+        "CPU": round(random.uniform(20, 40), 2),
+        "PDU": round(random.uniform(20, 40), 2)
     }
     return thermal_data
 
@@ -295,6 +333,7 @@ def tc_18_01():
         # Start sending housekeeping
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
+        threading.Thread(target=send_attitude_status, args=(groundrecieversocket,), daemon=True).start()
 
         
 def tc_18_02():
@@ -450,10 +489,9 @@ def send_thermal_data(client_socket):
             OB_time = f"{generate_onboard_time()} seconds"
         thermal_info = (
             f"TM.03.02 Thermal Data:\n"
-            f"\t  External Sunlit Surface: {thermal_data['external_sunlit_surface']}C\n"
-            f"\t  External Shadow Surface: {thermal_data['external_shadow_surface']}C\n"
-            f"\t  Internal Component 1: {thermal_data['internal_component_1']}C\n"
-            f"\t  Internal Component 2: {thermal_data['internal_component_2']}C\n"
+            f"\t  Camera: {thermal_data['Camera']}C\n"
+            f"\t  CPU: {thermal_data['CPU']}C\n"
+            f"\t  PDU: {thermal_data['PDU']}C\n"
             f"\t  {tajm} {OB_time}\n"
             f"\t  {generate_onboard_time()}\n"
         )
@@ -599,9 +637,9 @@ print(f"Listening on {server_ip}:{groundrecieveport}")
 # Otherwise just comment out the code, and open the files manually
   
 # Paths to the files you want to open
-file1 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Transmitter.py"
-file2 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Payload.py"
-file3 = r"C:\Users\rjaco\Documents\Skolgrejs\Eccliptic-Harpoon\Ground_Station_Reciever.py"
+file1 = r"C:\Users\joelo\OneDrive\Documents\Norrland\Luleå Tekniska Universitet\År 4\År4, Lp1 - R7018R\Eccliptic-Harpoon\Ground_Station_Transmitter.py"
+file2 = r"C:\Users\joelo\OneDrive\Documents\Norrland\Luleå Tekniska Universitet\År 4\År4, Lp1 - R7018R\Eccliptic-Harpoon\Payload.py"
+file3 = r"C:\Users\joelo\OneDrive\Documents\Norrland\Luleå Tekniska Universitet\År 4\År4, Lp1 - R7018R\Eccliptic-Harpoon\Ground_Station_Reciever.py"
 
 # Command to open files in new cmd windows
 subprocess.Popen(['start', 'cmd', '/k', 'python', file1], shell=True)

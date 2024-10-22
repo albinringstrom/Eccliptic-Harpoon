@@ -15,3 +15,26 @@
 'TC.18.04', 'Enter Sun-Pointing Mode'
 'TC.18.05', 'Enter Manoeuvre Mode'
 'TC.18.06', 'Enter Data-Sending Mode'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

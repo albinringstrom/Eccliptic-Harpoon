@@ -311,6 +311,7 @@ def tc_02_04():
                 tc_complete(False)  # If camera is already off, send message to ground reciever
                 groundrecieversocket.send("Camera already off\n".encode("utf-8"))
 
+
 # =========================
 # Large data transfer Functions
 # =========================

@@ -72,8 +72,8 @@ def run_client():
 
         # openImage()
 
-
-        print(f"Received: {response}")
+        if response[0:5] != "TM.03":
+            print(f"Received: {response}")
 
         if response == 'image_sent':
             openImage()
@@ -81,10 +81,9 @@ def run_client():
 
         # unreadable code that works
         check_word = f"{response.rsplit(' ', 2)[0]}"
-        # print(check_word[-3])
         if response[0:5] == "TM.03":
+            print(f"{response.rsplit(' ', 1)[0]}")
             if check_word[-3] == "s":
-                print("yep here")
                 f = open(r"Housekeeping_Log.txt", "a")
                 f.write(response.rsplit(' ', 1)[0])
                 f.close()

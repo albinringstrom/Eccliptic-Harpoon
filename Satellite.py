@@ -132,7 +132,7 @@ def anomaly_reporting(client_socket):
     
     while True:
         anomaly = "TM.05.01 Event reporting\n"
-        anomaly_detected = False
+        anomaly_detected = '0'
         # Checks if the maximum battery capacity is below a certain tresh hold and reports it
         if battery_max_capacity<50 and battery_state == 1:
             
@@ -209,22 +209,32 @@ def anomaly_reporting(client_socket):
 battery_max_capacity = 100 # Maximum capacity of the battery
 right_solar_panel_status = '1'
 left_solar_panel_status = '1'
+left_solar_panel_time_broken = 0
+right_solar_panel_time_broken = 0
 def event_simulation():
+    global left_solar_panel_time_broken, right_solar_panel_time_broken, right_solar_panel_status, left_solar_panel_status, battery_max_capacity
 
-    if random.random()>0.994: # the close the number is to 1 the less chance there will be for the solar panel to fail
-        right_solar_panel_status = '0'
-    else:
-        right_solar_panel_status = '1'
+    while True:
+        if random.random()>0.92: # the close the number is to 1 the less chance there will be for the solar panel to fail
+            right_solar_panel_status = '0'
+            right_solar_panel_time_broken = random.uniform(1, 15)
+        else:
+            right_solar_panel_time_broken = right_solar_panel_time_broken-1
+            if right_solar_panel_time_broken == 0:
+                right_solar_panel_status = '1'
     
-    if random.random()>0.994:
-        left_solar_panel_status = '0'
-    else:
-        left_solar_panel_status = '1'
+        if random.random()>0.92:
+            left_solar_panel_status = '0'
+            left_solar_panel_time_broken = random.uniform(1, 15)
+        else:
+            left_solar_panel_time_broken = left_solar_panel_time_broken-1
+            if left_solar_panel_time_broken == 0:
+                left_solar_panel_status = '1'
     
-    # Random chance for the battery to degrade
-    if random.random()>0.95:
-        battery_max_capacity = battery_max_capacity-random.uniform(1,5)
-    
+        # Random chance for the battery to degrade
+        if random.random()>0.95:
+            battery_max_capacity = battery_max_capacity-random.uniform(1,5)
+        time.sleep(8)
 # ==================================================================================================
 # BATTERY AND THERMAL DATA FUNCTIONS
 # ==================================================================================================
@@ -713,6 +723,7 @@ def tc_18_01():
         # Start sending housekeeping
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
+        threading.Thread(target=anomaly_reporting, args=(groundrecieversocket,), daemon=True).start()
 
 #enter SAFE-Mode command
 def tc_18_02():

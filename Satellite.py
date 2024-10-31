@@ -120,16 +120,20 @@ def obtime_eq_tag():
 # ==================================================================================================
 # EVENT REPORTING FUNCTION
 # ==================================================================================================
-left_panel_reported = '0' # Information an anomaly with the left solar panel has already been reported 
-right_panel_reported = '0' # Information an anomaly with the left solar panel has already been reported 
-Battery_state = 1   
+
+
 anomaly_check_interval = 10 # How many seconds between anomaly checks
 def anomaly_reporting(client_socket):
     
-    event_simulation()
-    # Detects anomalies and reports what has happened
-
+    threading.Thread(target=event_simulation, args=(), daemon=True).start()
     
+    # Detects anomalies and reports what has happened
+    
+
+    left_panel_reported = '0' # Information an anomaly with the left solar panel has already been reported 
+    right_panel_reported = '0' # Information an anomaly with the left solar panel has already been reported 
+    battery_state = 1
+
     while True:
         anomaly = "TM.05.01 Event reporting\n"
         anomaly_detected = '0'
@@ -159,7 +163,7 @@ def anomaly_reporting(client_socket):
             left_panel_reported = '1' # Sets left_panel_reported to '1' because the anomaly has been reported with the left solar panel
 
             anomaly = anomaly + (
-                "The left solar panel is malfunctioning\n"
+                "The left solar panel control system is malfunctioning\n"
             )
         elif left_panel_reported == '1' and left_solar_panel_status == '1':
                 anomaly_detected = '1'
@@ -167,7 +171,7 @@ def anomaly_reporting(client_socket):
                 left_panel_reported = '0' # Sets left_panel_problem_reported to '0' because the left solar panel has been reported to function again
                 
                 anomaly = anomaly + (
-                "The left solar panel is functioning again\n"
+                "The left solar panel control system is functioning again\n"
             )
 
         if right_solar_panel_status == False and right_panel_reported == False:
@@ -175,16 +179,16 @@ def anomaly_reporting(client_socket):
 
             right_panel_reported = '1' # Sets right_panel_reported to '1' because the anomaly has been reported with the right solar panel
             anomaly = anomaly + (
-                "The right solar panel is malfunctioning\n"
+                "The right solar panel control system is malfunctioning\n"
             )
 
-        elif right_sps_reported == '1' and right_solar_panel_status == '1':
+        elif right_panel_reported == '1' and right_solar_panel_status == '1':
                 anomaly_detected = '1'
                 
-                right_sps_reported = '0' # Sets right_panel_reported to '0' because the right solar panel has been reported to function again
+                right_panel_reported = '0' # Sets right_panel_reported to '0' because the right solar panel has been reported to function again
 
                 anomaly = anomaly + (
-                "The right solar panel is functioning again\n"
+                "The right solar panel control system is functioning again\n"
             )
                 
         # Checks if any anomalys have been detected
@@ -232,7 +236,7 @@ def event_simulation():
                 left_solar_panel_status = '1'
     
         # Random chance for the battery to degrade
-        if random.random()>0.95:
+        if random.random()>0.5:
             battery_max_capacity = battery_max_capacity-random.uniform(1,5)
         time.sleep(8)
 # ==================================================================================================

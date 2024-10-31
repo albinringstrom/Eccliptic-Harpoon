@@ -71,8 +71,8 @@ def run_client():
             break
 
         # openImage()
-
-        if response[0:5] != "TM.03":
+        
+        if response[0:5] != "TM.03" or response[0:8] != "TM.05.01":
             print(f"Received: {response}")
 
         if response == 'image_sent':
@@ -92,6 +92,18 @@ def run_client():
                 word = f"{response.rsplit(' ', 1)[0]} On-Board Time: {response.rsplit(' ', 1)[1]}\n"
                 f.write(word)
                 f.close()
+        if response[0:8] == "TM.05.01":
+            print(f"{response.rsplit(' ', 1)[0]}")
+            if check_word[-3] == "s":
+                f = open(r"Housekeeping_Log.txt", "a")
+                f.write(response.rsplit(' ', 1)[0])
+                f.close()
+            else:
+                f = open(r"Housekeeping_Log.txt", "a")
+                word = f"{response.rsplit(' ', 1)[0]} On-Board Time: {response.rsplit(' ', 1)[1]}\n"
+                f.write(word)
+                f.close()
+
 
 
     # close client socket (connection to the server)

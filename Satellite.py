@@ -144,7 +144,7 @@ def anomaly_reporting(client_socket):
             battery_state=2
             
             anomaly = anomaly + (
-                f"Max battery capacity is below 50% of the original value and is currently at {battery_max_capacity}\n%."
+                f"Max battery capacity is below 50% of the original value and is currently at {round(battery_max_capacity, 2)}%\n."
                 )
         elif battery_max_capacity<25 and battery_state == 2:
 
@@ -152,7 +152,7 @@ def anomaly_reporting(client_socket):
                 battery_state=3
 
                 anomaly = anomaly + (
-                    f"Max battery capacity is below 25% of the original value and is currently at {battery_max_capacity}\n%."
+                    f"Max battery capacity is below 25% of the original value and is currently at {round(battery_max_capacity, 2)}%\n."
                 )
             
     
@@ -219,7 +219,7 @@ def event_simulation():
     global left_solar_panel_time_broken, right_solar_panel_time_broken, right_solar_panel_status, left_solar_panel_status, battery_max_capacity
 
     while True:
-        if random.random()>0.92: # the close the number is to 1 the less chance there will be for the solar panel to fail
+        if random.random()>0.9: # the close the number is to 1 the less chance there will be for the solar panel to fail
             right_solar_panel_status = '0'
             right_solar_panel_time_broken = random.uniform(1, 15)
         else:
@@ -228,7 +228,7 @@ def event_simulation():
             if right_solar_panel_time_broken == 0:
                 right_solar_panel_status = '1'
     
-        if random.random()>0.92:
+        if random.random()>0.9:
             left_solar_panel_status = '0'
             left_solar_panel_time_broken = random.uniform(1, 15)
         else:

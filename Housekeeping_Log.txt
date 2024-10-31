@@ -37,4 +37,64 @@ The left solar panel control system is malfunctioning
 	  CPU: 37.59C
 	  PDU: 23.02C
 	  On-Board Time: 150 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 46.1%
+	  Charging: True
+	  On-Board Time: 200 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 36.49C
+	  CPU: 29.25C
+	  PDU: 30.89C
+	  On-Board Time: 200 seconds
+	 TM.05.01 Event reporting
+Max battery capacity is below 50% of the original value and is currently at 48.98616166758381
+%.	  On-Board Time: 241 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 46.5%
+	  Charging: True
+	  On-Board Time: 250 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 36.34C
+	  CPU: 38.14C
+	  PDU: 38.13C
+	  On-Board Time: 250 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 20.95C
+	  CPU: 33.91C
+	  PDU: 30.27C
+	  On-Board Time: 300 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 46.6%
+	  Charging: True
+	  On-Board Time: 300 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 47.1%
+	  Charging: True
+	  On-Board Time: 350 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 25.5C
+	  CPU: 22.18C
+	  PDU: 22.5C
+	  On-Board Time: 350 seconds
+	 TM.05.01 Event reporting
+Max battery capacity is below 25% of the original value and is currently at 20.940462372383497
+%.	  On-Board Time: 371 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 47.2%
+	  Charging: True
+	  On-Board Time: 400 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 37.47C
+	  CPU: 33.66C
+	  PDU: 22.52C
+	  On-Board Time: 400 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 28.49C
+	  CPU: 33.58C
+	  PDU: 24.17C
+	  On-Board Time: 450 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 47.5%
+	  Charging: True
+	  On-Board Time: 450 seconds
 	 

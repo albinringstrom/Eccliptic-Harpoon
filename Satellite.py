@@ -228,7 +228,7 @@ def event_simulation():
         else:
             if right_solar_panel_time_broken>0:
                 right_solar_panel_time_broken = right_solar_panel_time_broken-1
-            if right_solar_panel_time_broken == 0:
+            if right_solar_panel_time_broken <= 0:
                 right_solar_panel_status = '1'
     
         if random.random()>(1-solar_panel_failure_rate):
@@ -237,7 +237,7 @@ def event_simulation():
         else:
             if left_solar_panel_time_broken>0:
                 left_solar_panel_time_broken = left_solar_panel_time_broken-1
-            if left_solar_panel_time_broken == 0:
+            if left_solar_panel_time_broken <= 0:
                 left_solar_panel_status = '1'
     
         # Random chance for the battery to degrade

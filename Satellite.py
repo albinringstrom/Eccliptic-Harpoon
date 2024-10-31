@@ -218,7 +218,7 @@ right_solar_panel_time_broken = 0
 def event_simulation():
     global left_solar_panel_time_broken, right_solar_panel_time_broken, right_solar_panel_status, left_solar_panel_status, battery_max_capacity
     
-    solar_panel_failure_rate = 0.05 # Failure rate for the solar panel control system
+    solar_panel_failure_rate = 0.03 # Failure rate for the solar panel control system
     battery_degradation_rate = 0.05 # Battery degratadion rate
 
     while True:

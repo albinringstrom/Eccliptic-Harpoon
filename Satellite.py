@@ -144,7 +144,7 @@ def anomaly_reporting(client_socket):
             battery_state=2
             
             anomaly = anomaly + (
-                f"Max battery capacity is below 50% of the original value and is currently at {round(battery_max_capacity, 2)}%\n."
+                f"\t  Max battery capacity is below 50% of the original value and is currently at {round(battery_max_capacity, 2)}%\n."
                 )
         elif battery_max_capacity<25 and battery_state == 2:
 
@@ -152,7 +152,7 @@ def anomaly_reporting(client_socket):
                 battery_state=3
 
                 anomaly = anomaly + (
-                    f"Max battery capacity is below 25% of the original value and is currently at {round(battery_max_capacity, 2)}%\n."
+                    f"\t  Max battery capacity is below 25% of the original value and is currently at {round(battery_max_capacity, 2)}%\n."
                 )
             
     
@@ -163,7 +163,7 @@ def anomaly_reporting(client_socket):
             left_panel_reported = '1' # Sets left_panel_reported to '1' because the anomaly has been reported with the left solar panel
 
             anomaly = anomaly + (
-                "The left solar panel control system is malfunctioning\n"
+                "\t  The left solar panel control system is malfunctioning\n"
             )
         elif left_panel_reported == '1' and left_solar_panel_status == '1':
                 anomaly_detected = '1'
@@ -171,7 +171,7 @@ def anomaly_reporting(client_socket):
                 left_panel_reported = '0' # Sets left_panel_problem_reported to '0' because the left solar panel has been reported to function again
                 
                 anomaly = anomaly + (
-                "The left solar panel control system is functioning again\n"
+                "\t  The left solar panel control system is functioning again\n"
             )
 
         if right_solar_panel_status == False and right_panel_reported == False:
@@ -179,7 +179,7 @@ def anomaly_reporting(client_socket):
 
             right_panel_reported = '1' # Sets right_panel_reported to '1' because the anomaly has been reported with the right solar panel
             anomaly = anomaly + (
-                "The right solar panel control system is malfunctioning\n"
+                "\t  The right solar panel control system is malfunctioning\n"
             )
 
         elif right_panel_reported == '1' and right_solar_panel_status == '1':
@@ -188,7 +188,7 @@ def anomaly_reporting(client_socket):
                 right_panel_reported = '0' # Sets right_panel_reported to '0' because the right solar panel has been reported to function again
 
                 anomaly = anomaly + (
-                "The right solar panel control system is functioning again\n"
+                "\t  The right solar panel control system is functioning again\n"
             )
                 
         # Checks if any anomalys have been detected

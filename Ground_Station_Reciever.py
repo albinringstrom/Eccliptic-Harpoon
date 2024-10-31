@@ -70,9 +70,8 @@ def run_client():
         if response.lower() == "closed":
             break
 
-        # openImage()
         
-        if response[0:5] != "TM.03" or response[0:8] != "TM.05.01":
+        if response[0:5] != "TM.03" and response[0:8] != "TM.05.01":
             print(f"Received: {response}")
 
         if response == 'image_sent':

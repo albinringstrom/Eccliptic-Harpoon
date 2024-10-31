@@ -125,7 +125,7 @@ def obtime_eq_tag():
 anomaly_check_interval = 10 # How many seconds between anomaly checks
 def anomaly_reporting(client_socket):
     
-    threading.Thread(target=event_simulation, args=(), daemon=True).start()
+    
     
     # Detects anomalies and reports what has happened
     
@@ -710,13 +710,10 @@ def tc_18_01():
 
     global mode
     tc_execution(True)
-    yesno = tm_05_03("TC.18.01")
 
     if mode != 0:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already on\n".encode("utf-8"))
-    elif yesno == 0:        
-        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         time.sleep(random.randint(1,10))
@@ -733,19 +730,18 @@ def tc_18_01():
         threading.Thread(target=send_battery_status, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=send_thermal_data, args=(groundrecieversocket,), daemon=True).start()
         threading.Thread(target=anomaly_reporting, args=(groundrecieversocket,), daemon=True).start()
+        threading.Thread(target=event_simulation).start()
+
 
 #enter SAFE-Mode command
 def tc_18_02():
     global mode
     tc_execution(True)
-    yesno = tm_05_03("TC.18.02")
 
     if mode == 1:
         print(mode)
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in safe mode\n".encode("utf-8"))
-    elif yesno == 0:
-        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         time.sleep(random.randint(1,20))
@@ -757,13 +753,10 @@ def tc_18_02():
 def tc_18_03():
     global mode
     tc_execution(True)
-    yesno = tm_05_03("TC.18.03")
 
     if mode == 2:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in moon pointing mode\n".encode("utf-8"))
-    elif yesno == 0:
-        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         time.sleep(random.randint(1,20))
@@ -775,13 +768,10 @@ def tc_18_03():
 def tc_18_04():
     global mode
     tc_execution(True)
-    yesno = tm_05_03("TC.18.04")
 
     if mode == 3:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in sun pointing mode\n".encode("utf-8"))
-    elif yesno == 0:
-        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         time.sleep(random.randint(1,20))
@@ -793,13 +783,10 @@ def tc_18_04():
 def tc_18_05():
     global mode
     tc_execution(True)
-    yesno = tm_05_03("TC.18.05")
 
     if mode == 4:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in manoeuvre mode\n".encode("utf-8"))
-    elif yesno == 0:
-        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         time.sleep(random.randint(1,20))
@@ -811,13 +798,10 @@ def tc_18_05():
 def tc_18_06():
     global mode
     tc_execution(True)
-    yesno = tm_05_03("TC.18.06")
 
     if mode == 5:
         tc_progress(False)
         groundrecieversocket.send("Spacecraft already in data-sending mode\n".encode("utf-8"))
-    elif yesno == 0:
-        groundrecieversocket.send("Cancelled command\n".encode("utf-8"))
     else:
         tc_progress(True)
         time.sleep(random.randint(1,20))
@@ -841,15 +825,7 @@ def tc_69_69(mode):
         process.wait() # Wait for the process to finish
 
 
-def tm_05_03(command):
-    groundrecieversocket.send(f"Are you sure you want to execute {command}\n Y/N: ".encode("utf-8"))
-    groundsendersocket.send(f"Are you sure you want to execute {command}\n Y/N: ".encode("utf-8"))
-    confirmation = groundsendersocket.recv(1024)
-    confirmation = confirmation.decode("utf-8")
-    if confirmation == "Y" or confirmation == "y":
-        return 1
-    else:
-        return 0
+
 
 #===================================================================================================
 

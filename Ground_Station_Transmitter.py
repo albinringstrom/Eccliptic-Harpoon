@@ -41,17 +41,7 @@ def sendmessage(TC):
     Seq_count += 1
     TC = TC + f"{Seq_count}"
     client.send(TC.encode("utf-8")[:1024])
-
-    #check if confirmation is needed
-    if f"{TC[3]}{TC[4]}" == "18":
-        response = client.recv(1024)
-        response = response.decode("utf-8")
-        print(f"Received: {response}")
-        confirmation = input()
-        client.send(confirmation.encode("utf-8")[:1024])
-        return
-    else:
-        return
+    return
 
 
 

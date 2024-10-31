@@ -174,7 +174,7 @@ def anomaly_reporting(client_socket):
                 "\t  The left solar panel control system is functioning again\n"
             )
 
-        if right_solar_panel_status == False and right_panel_reported == False:
+        if right_solar_panel_status == '0' and right_panel_reported == '0':
             anomaly_detected = '1'
 
             right_panel_reported = '1' # Sets right_panel_reported to '1' because the anomaly has been reported with the right solar panel

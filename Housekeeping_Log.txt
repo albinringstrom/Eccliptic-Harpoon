@@ -61,4 +61,16 @@ TM.03.01 Battery Status:
 	 TM.05.01 Event reporting
 	  The left solar panel control system is malfunctioning
 	  On-Board Time: 250 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 42.6%
+	  Charging: False
+	  On-Board Time: 300 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 36.65C
+	  CPU: 33.51C
+	  PDU: 31.42C
+	  On-Board Time: 300 seconds
+	 TM.05.01 Event reporting
+	  The left solar panel control system is functioning again
+	  On-Board Time: 320 seconds
 	 

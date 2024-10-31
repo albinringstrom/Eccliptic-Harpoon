@@ -217,9 +217,12 @@ left_solar_panel_time_broken = 0
 right_solar_panel_time_broken = 0
 def event_simulation():
     global left_solar_panel_time_broken, right_solar_panel_time_broken, right_solar_panel_status, left_solar_panel_status, battery_max_capacity
+    
+    solar_panel_failure_rate = 0.05 # Failure rate for the solar panel control system
+    battery_degradation_rate = 0.05 # Battery degratadion rate
 
     while True:
-        if random.random()>0.9: # the close the number is to 1 the less chance there will be for the solar panel to fail
+        if random.random()>(1-solar_panel_failure_rate): # the close the number is to 1 the less chance there will be for the solar panel to fail
             right_solar_panel_status = '0'
             right_solar_panel_time_broken = random.uniform(1, 15)
         else:
@@ -228,7 +231,7 @@ def event_simulation():
             if right_solar_panel_time_broken == 0:
                 right_solar_panel_status = '1'
     
-        if random.random()>0.9:
+        if random.random()>(1-solar_panel_failure_rate):
             left_solar_panel_status = '0'
             left_solar_panel_time_broken = random.uniform(1, 15)
         else:
@@ -238,7 +241,7 @@ def event_simulation():
                 left_solar_panel_status = '1'
     
         # Random chance for the battery to degrade
-        if random.random()>0.5:
+        if random.random()>(1-battery_degradation_rate):
             battery_max_capacity = battery_max_capacity-random.uniform(1,5)
         time.sleep(8)
 # ==================================================================================================

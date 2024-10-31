@@ -223,7 +223,8 @@ def event_simulation():
             right_solar_panel_status = '0'
             right_solar_panel_time_broken = random.uniform(1, 15)
         else:
-            right_solar_panel_time_broken = right_solar_panel_time_broken-1
+            if right_solar_panel_time_broken>0:
+                right_solar_panel_time_broken = right_solar_panel_time_broken-1
             if right_solar_panel_time_broken == 0:
                 right_solar_panel_status = '1'
     
@@ -231,7 +232,8 @@ def event_simulation():
             left_solar_panel_status = '0'
             left_solar_panel_time_broken = random.uniform(1, 15)
         else:
-            left_solar_panel_time_broken = left_solar_panel_time_broken-1
+            if left_solar_panel_time_broken>0:
+                left_solar_panel_time_broken = left_solar_panel_time_broken-1
             if left_solar_panel_time_broken == 0:
                 left_solar_panel_status = '1'
     

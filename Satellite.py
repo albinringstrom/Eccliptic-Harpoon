@@ -125,7 +125,7 @@ def obtime_eq_tag():
 anomaly_check_interval = 10 # How many seconds between anomaly checks
 def anomaly_reporting(client_socket):
     
-    threading.Thread(target=event_simulation, args=(), daemon=True).start()
+    
     
     # Detects anomalies and reports what has happened
     
@@ -516,6 +516,9 @@ def execute_tc(finalTC):
             tc_accept(True)
             tc_18_06()
             mode = 5
+        case "TC.50.01":
+            tc_accept(True)
+            tc_50_01()
         case "TC.69.69":
             tc_accept(True)
             tc_69_69()
@@ -824,6 +827,25 @@ def tc_18_06():
         groundrecieversocket.send("Spacecraft in data-sending mode\n".encode("utf-8"))
         tc_complete(True)
         mode = 5
+
+# Turn on event simulation
+event_thread = threading.Thread(target=event_simulation, args=(), daemon=True)
+def tc_50_01():
+    #global is_event_thread_alive
+    tc_execution(True)
+    
+    
+    if  event_thread.is_alive():
+        tc_progress(False)
+        groundrecieversocket.send("Event simulation already running\n".encode("utf-8"))
+        print("Event simulation already running\n")
+    else:
+        tc_progress(True)
+        event_thread.start()
+        groundrecieversocket.send("Event simulation turned on\n".encode("utf-8"))
+        print("Event simulation turned on\n")
+        tc_complete(True)
+        
 
 #enter secret mode command
 def tc_69_69(mode):

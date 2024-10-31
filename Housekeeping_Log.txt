@@ -1,146 +1,76 @@
 TM.03.01 Battery Status:
-	  Percent: 42.5%
+	  Percent: 42.7%
 	  Charging: False
 	  On-Board Time: 0 seconds
 	 TM.03.02 Thermal Data:
-	  Camera: 28.6C
-	  CPU: 26.82C
-	  PDU: 30.69C
+	  Camera: 32.73C
+	  CPU: 28.62C
+	  PDU: 35.72C
 	  On-Board Time: 0 seconds
-	 TM.03.02 Thermal Data:
-	  Camera: 20.98C
-	  CPU: 29.73C
-	  PDU: 28.3C
-	  On-Board Time: 50 seconds
-	 TM.03.01 Battery Status:
-	  Percent: 41.9%
-	  Charging: False
-	  On-Board Time: 50 seconds
-	 TM.03.02 Thermal Data:
-	  Camera: 31.0C
-	  CPU: 26.55C
-	  PDU: 33.67C
-	  On-Board Time: 100 seconds
-	 TM.03.01 Battery Status:
-	  Percent: 41.0%
-	  Charging: True
-	  On-Board Time: 100 seconds
-	 TM.03.02 Thermal Data:
-	  Camera: 22.36C
-	  CPU: 34.43C
-	  PDU: 29.83C
-	  On-Board Time: 150 seconds
-	 TM.03.01 Battery Status:
-	  Percent: 41.8%
-	  Charging: True
-	  On-Board Time: 150 seconds
-	 TM.03.02 Thermal Data:
-	  Camera: 35.33C
-	  CPU: 36.51C
-	  PDU: 35.05C
-	  On-Board Time: 200 seconds
 	 TM.03.01 Battery Status:
 	  Percent: 42.3%
 	  Charging: True
-	  On-Board Time: 200 seconds
+	  On-Board Time: 50 seconds
 	 TM.03.02 Thermal Data:
-	  Camera: 35.16C
-	  CPU: 36.21C
-	  PDU: 21.55C
-	  On-Board Time: 250 seconds
+	  Camera: 22.6C
+	  CPU: 33.77C
+	  PDU: 28.91C
+	  On-Board Time: 50 seconds
+	 TM.05.01 Event reporting
+	  The left solar panel control system is malfunctioning
+	  On-Board Time: 60 seconds
 	 TM.03.01 Battery Status:
 	  Percent: 42.8%
 	  Charging: True
+	  On-Board Time: 100 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 25.26C
+	  CPU: 22.54C
+	  PDU: 39.78C
+	  On-Board Time: 100 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 43.6%
+	  Charging: True
+	  On-Board Time: 150 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 30.84C
+	  CPU: 34.62C
+	  PDU: 23.65C
+	  On-Board Time: 150 seconds
+	 TM.05.01 Event reporting
+	  The left solar panel control system is functioning again
+	  On-Board Time: 150 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 43.1%
+	  Charging: False
+	  On-Board Time: 200 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 33.5C
+	  CPU: 23.32C
+	  PDU: 31.78C
+	  On-Board Time: 200 seconds
+	 TM.03.01 Battery Status:
+	  Percent: 42.6%
+	  Charging: True
+	  On-Board Time: 250 seconds
+	 TM.03.02 Thermal Data:
+	  Camera: 39.33C
+	  CPU: 34.85C
+	  PDU: 37.65C
+	  On-Board Time: 250 seconds
+	 TM.05.01 Event reporting
+	  The left solar panel control system is malfunctioning
 	  On-Board Time: 250 seconds
 	 TM.03.01 Battery Status:
-	  Percent: 43.1%
-	  Charging: True
-	  Local time: 16:20:31
-	  On-Board Time: 301
-
-TM.03.02 Thermal Data:
-	  Camera: 36.63C
-	  CPU: 37.81C
-	  PDU: 25.27C
-	  Local time: 16:20:31
-	  On-Board Time: 301
-
-TM.03.02 Thermal Data:
-	  Camera: 38.83C
-	  CPU: 26.54C
-	  PDU: 22.9C
-	  Local time: 16:21:21
-	  On-Board Time: 351
-
-TM.03.01 Battery Status:
-	  Percent: 43.1%
-	  Charging: True
-	  Local time: 16:21:21
-	  On-Board Time: 351
-
-TM.03.02 Thermal Data:
-	  Camera: 23.72C
-	  CPU: 33.23C
-	  PDU: 21.49C
-	  Local time: 16:22:11
-	  On-Board Time: 401
-
-TM.03.01 Battery Status:
-	  Percent: 43.9%
-	  Charging: True
-	  Local time: 16:22:11
-	  On-Board Time: 401
-
-TM.03.02 Thermal Data:
-	  Camera: 23.26C
-	  CPU: 24.85C
-	  PDU: 35.42C
-	  On-Board Time: 451 seconds
-	 TM.03.01 Battery Status:
-	  Percent: 44.1%
-	  Charging: True
-	  On-Board Time: 451 seconds
+	  Percent: 42.6%
+	  Charging: False
+	  On-Board Time: 300 seconds
 	 TM.03.02 Thermal Data:
-	  Camera: 35.32C
-	  CPU: 27.08C
-	  PDU: 20.28C
-	  On-Board Time: 501 seconds
-	 TM.03.01 Battery Status:
-	  Percent: 44.3%
-	  Charging: True
-	  On-Board Time: 501 seconds
-	 TM.03.02 Thermal Data:
-	  Camera: 25.32C
-	  CPU: 26.63C
-	  PDU: 35.23C
-	  On-Board Time: 551 seconds
-	 TM.03.01 Battery Status:
-	  Percent: 44.4%
-	  Charging: True
-	  On-Board Time: 551 seconds
-	 TM.03.02 Thermal Data:
-	  Camera: 33.55C
-	  CPU: 36.49C
-	  PDU: 34.19C
-	  Local time: 16:25:31
-	  On-Board Time: 601
-
-TM.03.01 Battery Status:
-	  Percent: 44.8%
-	  Charging: True
-	  Local time: 16:25:31
-	  On-Board Time: 601
-
-TM.03.02 Thermal Data:
-	  Camera: 34.72C
-	  CPU: 34.17C
-	  PDU: 37.62C
-	  Local time: 16:26:21
-	  On-Board Time: 651
-
-TM.03.01 Battery Status:
-	  Percent: 45.3%
-	  Charging: True
-	  Local time: 16:26:21
-	  On-Board Time: 651
-
+	  Camera: 36.65C
+	  CPU: 33.51C
+	  PDU: 31.42C
+	  On-Board Time: 300 seconds
+	 TM.05.01 Event reporting
+	  The left solar panel control system is functioning again
+	  On-Board Time: 320 seconds
+	 
